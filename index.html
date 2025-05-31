@@ -1,735 +1,1974 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ESPASIO</title>
-<style>
-/* ========== EXISTING CSS (NO CHANGES) ========== */
-body {
-    font-family: Century Gothic;
-    margin: 0;
-    padding: 8px;
-    background: #003300;
-    color: #f5f7fa;
-    max-width: 600px;
-    margin: 0 auto;
-    font-size: 15px;
-}
-h1 {
-    color: White;
-    text-align: center;
-    margin: 10px 0;
-    font-weight: 600;
-    font-size: 20px;
-    font-style:BabaPro;
-}
-.tabs {
-    display: flex;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 15px;
-}
-.tab {
-    padding: 6px 12px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #f5f7fa;
-    position: relative;
-}
-.tab.active {
-    color: white;
-    font-weight: 600;
-}
-.tab.active:after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    right: 0;
-    height: 10px;
-    background: #003300;
-}
-.tab-content {
-    display: none;
-}
-.tab-content.active {
-    display: block;
-}
-.form-group {
-    margin-bottom: 10px;
-}
-label {
-    display: block;
-    margin-bottom: 4px;
-    color: #7f8c8d;
-    font-size: 20px;
-}
-input, select {
-    width: 100%;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    font-size: 12px;
-    box-sizing: border-box;
-    margin-bottom: 5px;
-}
-.duration-inputs {
-    display: flex;
-    gap: 6px;
-}
-.duration-inputs input {
-    flex: 1;
-}
-button {
-    background: #c6cebe;
-    color: #003300;
-    border: none;
-    padding: 20px 8px;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 15px;
-    transition: background 0.2s;
-}
-button:hover {
-    background: #405f3d;
-}
-button.secondary {
-    background: #c6cebe;
-}
-button.secondary:hover {
-    background: #555;
-}
-button.alarm-btn {
-    background: #e74c3c;
-    width: 100%;
-    margin-top: 7px;
-    margin-bottom: 4px;
-    padding: 6px 6px;
-}
-.session-card {
-    background: white;
-    border-radius: 3px;
-    padding: 6px;
-    margin-bottom: 4px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-.session-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 3px;
-}
-.session-name {
-    font-weight: 600;
-    font-size: 15px;
-    color: #003300;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.space-icon {
-    width: 70px;
-    height: 70px;
-    object-fit: contain;
-}
-.user-name {
-    font-style: italic;
-    color: #003300;
-    margin-left: 4px;
-    cursor: pointer;
-    border-bottom: 1px dashed #95a5a6;
-    font-size: 25px;
-}
-.user-name-input {
-    width: 100px;
-    padding: 4px;
-    font-size: 14px;
-    border: 1px solid #ddd;
-    border-radius: 2px;
-    margin-left: 4px;
-}
-.time-info {
-    margin-bottom: 3px;
-    background: #f8f8f8;
-    padding: 4px;
-    border-radius: 2px;
-    font-size: 11px;
-}
-.time-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 20px;
-    color: #7f8c8d;
-    margin-bottom: 1px;
-}
-.time-label {
-    font-weight: 600;
-    color: #003300;
-}
-.remaining-time {
-    text-align: center;
-    font-size: 20px;
-    margin: 7px 0;
-    padding: 10px;
-    background: #405f3d;
-    border-radius: 2px;
-    position: relative;
-}
-.overtime-duration {
-    font-size: 14px;
-    color: #e74c3c;
-    font-weight: bold;
-    margin-top: 3px;
-}
-.time-stamp {
-    font-size: 9px;
-    color: #405f3d;
-    text-align: right;
-}
-.warning {
-    color: #405f3d;
-    background: #fff8e6 !important;
-}
-.expired {
-    color: red;
-    font-weight: bold;
-    background: #ffebee !important;
-}
-.sound-test {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-}
-.empty-state {
-    text-align: center;
-    color: #95a5a6;
-    padding: 15px 0;
-    font-size: 11px;
-}
-.minute-adjustments, .hour-adjustments {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 3px;
-    margin-bottom: 3px;
-}
-.time-adjustments button {
-    padding: 4px;
-    font-size: 13px;
-}
-.user-input {
-    margin-top: 4px;
-}
-.overtime-fee {
-    font-size: 11px;
-    color: #e74c3c;
-    text-align: center;
-    margin-top: 3px;
-    font-weight: bold;
-    padding: 2px;
-    background: #ffeeee;
-    border-radius: 2px;
-}
-#active-sessions-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 5px;
-    padding: 3px;
-}
-#inactive-sessions-container {
-    max-height: 70vh;
-    overflow-y: auto;
-}
-.receipt-popup {
-    width: 100%;
-    max-width: 200px;
-    padding: 10px;
-    background: white;
-    color: #003300;
-    font-family: Arial;
-}
-.receipt-header {
-    text-align: center;
-    margin-bottom: 15px;
-}
-.receipt-logo {
-    max-width: 200px;
-    margin: 0 auto 10px;
-    display: block;
-}
-.receipt-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-.receipt-details {
-    margin-bottom: 15px;
-}
-.receipt-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 3px;
-    font-size: 13px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 40mm;
-}
-.receipt-total {
-    font-size: 16px;
-    font-weight: bold;
-    margin: 10px 0;
-}
-.receipt-label {
-    font-weight: bold;
-}
-.receipt-divider {
-    border-top: 1px solid #000;
-    margin: 10px 0;
-}
-.payment-inputs {
-    margin: 15px 0;
-}
-.payment-input-group {
-    margin-bottom: 10px;
-}
-.payment-input-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
-    font-weight: bold;
-}
-.payment-input-group input {
-    width: 100%;
-    padding: 8px;
-    border: 5px solid #ddd;
-    border-radius: 3px;
-    font-size: 14px;
-}
-.receipt-footer {
-    text-align: center;
-    font-size: 12px;
-    margin-top: 15px;
-}
-.extension-details {
-    margin: 10px 0;
-    padding: 5px;
-    background: #f5f5f5;
-    border-radius: 3px;
-}
-.extension-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 2px;
-    font-size: 12px;
-}
-.daily-summary {
-    background: white;
-    border-radius: 3px;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: #003300;
-}
-.summary-header {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 8px;
-    text-align: center;
-}
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 4px;
-    font-size: 14px;
-}
-.summary-total {
-    font-weight: bold;
-    border-top: 1px solid #ddd;
-    padding-top: 4px;
-    margin-top: 4px;
-}
-.space-summary {
-    margin-left: 10px;
-    font-size: 13px;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESPASIO</title>
+    <style>
+        /* ========== ORIGINAL STYLES ========== */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 8px;
+            background: #003300;
+            color: #f5f7fa;
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 15px;
+        }
+        h1 {
+            color: White;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: 600;
+            font-size: 20px;
+            font-style:BabaPro;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        .tab {
+            padding: 6px 12px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #f5f7fa;
+            position: relative;
+        }
+        .tab.active {
+            color: white;
+            font-weight: 600;
+        }
+        .tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: #003300;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            color: #7f8c8d;
+            font-size: 20px;
+        }
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+            box-sizing: border-box;
+            margin-bottom: 5px;
+        }
+        .duration-inputs {
+            display: flex;
+            gap: 6px;
+        }
+        .duration-inputs input {
+            flex: 1;
+        }
+        button {
+            background: #c6cebe;
+            color: #003300;
+            border: none;
+            padding: 20px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #405f3d;
+        }
+        button.secondary {
+            background: #c6cebe;
+        }
+        button.secondary:hover {
+            background: #555;
+        }
+        button.alarm-btn {
+            background: #e74c3c;
+            width: 100%;
+            margin-top: 7px;
+            margin-bottom: 4px;
+            padding: 6px 6px;
+        }
+        .session-card {
+            background: white;
+            border-radius: 3px;
+            padding: 6px;
+            margin-bottom: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        .session-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #003300;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .space-icon {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+        }
+        .user-name {
+            font-style: italic;
+            color: #003300;
+            margin-left: 4px;
+            cursor: pointer;
+            border-bottom: 1px dashed #95a5a6;
+            font-size: 25px;
+        }
+        .user-name-input {
+            width: 100px;
+            padding: 4px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            margin-left: 4px;
+        }
+        .time-info {
+            margin-bottom: 3px;
+            background: #f8f8f8;
+            padding: 4px;
+            border-radius: 2px;
+            font-size: 11px;
+        }
+        .time-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 20px;
+            color: #7f8c8d;
+            margin-bottom: 1px;
+        }
+        .time-label {
+            font-weight: 600;
+            color: #003300;
+        }
+        .remaining-time {
+            text-align: center;
+            font-size: 20px;
+            margin: 7px 0;
+            padding: 10px;
+            background: #405f3d;
+            border-radius: 2px;
+            position: relative;
+        }
+        .overtime-duration {
+            font-size: 14px;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 3px;
+        }
+        .time-stamp {
+            font-size: 9px;
+            color: #405f3d;
+            text-align: right;
+        }
+        .warning {
+            color: #405f3d;
+            background: #fff8e6 !important;
+        }
+        .expired {
+            color: red;
+            font-weight: bold;
+            background: #ffebee !important;
+        }
+        .sound-test {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .empty-state {
+            text-align: center;
+            color: #95a5a6;
+            padding: 15px 0;
+            font-size: 11px;
+        }
+        .minute-adjustments, .hour-adjustments {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3px;
+            margin-bottom: 3px;
+        }
+        .time-adjustments button {
+            padding: 4px;
+            font-size: 13px;
+        }
+        .user-input {
+            margin-top: 4px;
+        }
+        .overtime-fee {
+            font-size: 11px;
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 3px;
+            font-weight: bold;
+            padding: 2px;
+            background: #ffeeee;
+            border-radius: 2px;
+        }
+        #active-sessions-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 5px;
+            padding: 3px;
+        }
+        #inactive-sessions-container {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        /* REPORT TAB STYLES */
+        #report-container {
+            background: white;
+            color: #003300;
+            padding: 10px;
+            border-radius: 3px;
+        }
+        .report-header {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        .report-section {
+            margin-bottom: 15px;
+        }
+        .report-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .report-label {
+            font-weight: 600;
+        }
+        .report-total {
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+            padding-top: 5px;
+            margin-top: 10px;
+        }
+        /* RECEIPT POPUP STYLES */
+        .receipt-popup {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            background: white;
+            color: #003300;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .receipt-logo {
+            max-width: 150px;
+            margin: 0 auto 10px;
+            display: block;
+        }
+        .receipt-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .receipt-details {
+            margin-bottom: 15px;
+        }
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+        .receipt-total {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .receipt-label {
+            font-weight: bold;
+        }
+        .receipt-divider {
+            border-top: 1px dashed #ccc;
+            margin: 10px 0;
+        }
+        .payment-inputs {
+            margin: 15px 0;
+        }
+        .payment-input-group {
+            margin-bottom: 10px;
+        }
+        .payment-input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .payment-input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        .receipt-footer {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .receipt-popup, .receipt-popup * {
+                visibility: visible;
+            }
+            .receipt-popup {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 58mm;
+                padding: 2mm;
+                font-size: 12px;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .receipt-logo {
+                max-width: 120px;
+            }
+        }
 
-/* ========== NEW REPORT TAB STYLES ========== */
-.report-controls {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-}
-
-.report-controls select, .report-controls button {
-    padding: 8px 12px;
-    border-radius: 3px;
-    border: none;
-    background: white;
-    color: #003300;
-}
-
-.report-results {
-    background: white;
-    border-radius: 3px;
-    padding: 10px;
-    color: #003300;
-    margin-bottom: 15px;
-}
-
-.report-summary {
-    margin-bottom: 15px;
-}
-
-.report-period-title {
-    font-weight: bold;
-    font-size: 18px;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.report-totals {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.report-total-item {
-    background: #f5f5f5;
-    padding: 8px;
-    border-radius: 3px;
-    text-align: center;
-}
-
-.report-total-value {
-    font-weight: bold;
-    font-size: 16px;
-    color: #003300;
-}
-
-.report-space-breakdown {
-    margin-top: 15px;
-}
-
-.report-space-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.report-details {
-    margin-top: 20px;
-    max-height: 300px;
-    overflow-y: auto;
-}
-
-.report-session-item {
-    padding: 8px 0;
-    border-bottom: 1px dashed #ddd;
-    font-size: 13px;
-}
-
-.report-session-time {
-    color: #7f8c8d;
-    font-size: 12px;
-}
-
-.print-button {
-    background: #003300;
-    color: white;
-    margin-top: 15px;
-    width: 100%;
-    padding: 10px;
-}
-
-@media print {
-    body * {
-        visibility: hidden;
-    }
-    .report-results, .report-results * {
-        visibility: visible;
-    }
-    .report-results {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
-    .no-print {
-        display: none;
-    }
-}
-</style>
+        /* ========== NEW STORE PANEL STYLES ========== */
+        .main-container {
+            display: flex;
+            position: relative;
+        }
+        .content-area {
+            width: 70%;
+            transition: width 0.3s;
+        }
+        .store-panel {
+            width: 30%;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            background: #002200;
+            padding: 15px;
+            box-sizing: border-box;
+            border-left: 1px solid #004400;
+            overflow-y: auto;
+        }
+        .store-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .store-logo img {
+            max-width: 80%;
+        }
+        .product-categories {
+            margin-bottom: 15px;
+        }
+        .category-select {
+            width: 100%;
+            padding: 8px;
+            background: #003300;
+            color: white;
+            border: 1px solid #004400;
+            border-radius: 3px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 3px;
+            padding: 10px;
+            color: #003300;
+            text-align: center;
+        }
+        .product-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin: 0 auto 5px;
+            display: block;
+        }
+        .product-name {
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .product-price {
+            color: #006600;
+            margin-bottom: 5px;
+        }
+        .add-to-cart {
+            background: #003300;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .cart-container {
+            background: white;
+            border-radius: 3px;
+            padding: 10px;
+            color: #003300;
+        }
+        .cart-title {
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .cart-total {
+            font-weight: bold;
+            border-top: 1px solid #ddd;
+            padding-top: 5px;
+            margin-top: 10px;
+        }
+        .checkout-btn {
+            background: #006600;
+            color: white;
+            border: none;
+            padding: 8px;
+            width: 100%;
+            border-radius: 3px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .stock-warning {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+        /* ========== PRODUCT MANAGEMENT STYLES ========== */
+        .product-management {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .management-container {
+            background: white;
+            width: 80%;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 5px;
+            color: #003300;
+        }
+        .management-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .management-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .close-management {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .product-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-top: 10px;
+            display: block;
+        }
+        .product-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .product-list-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+        .product-list-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        .product-actions button {
+            margin-left: 5px;
+            padding: 3px 6px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .edit-btn {
+            background: #3498db;
+            color: white;
+        }
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        .save-btn {
+            background: #006600;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
-<h1>ESPASIO</h1>
-<div class="tabs">
-    <button class="tab active" onclick="switchTab('main')">New</button>
-    <button class="tab" onclick="switchTab('active')">Active</button>
-    <button class="tab" onclick="switchTab('inactive')">History</button>
-    <!-- NEW REPORT TAB BUTTON -->
-    <button class="tab" onclick="switchTab('report')">Report</button>
-</div>
-
-<!-- EXISTING TAB CONTENTS (NO CHANGES) -->
-<div id="main" class="tab-content active">
-    <div class="form-group">
-        <label for="space-name">Select Space</label>
-        <select id="space-name">
-            <option value="" disabled selected>Select space</option>
-            <option value="Desk Zone">Desk Zone</option>
-            <option value="Flex Space">Flex Space</option>
-            <option value="Hangout for Two">Hangout for Two</option>
-            <option value="Hangout for Three">Hangout for Three</option>
-        </select>
-        <input type="text" id="user-name" placeholder="Enter user name" class="user-input">
-    </div>
-    <div class="form-group">
-        <label for="pax">Number of Persons (PAX)</label>
-        <input type="number" id="pax" min="1" value="1" placeholder="Enter number of persons">
-    </div>
-    <div class="form-group">
-        <label>Duration</label>
-        <div class="duration-inputs">
-            <input type="number" id="hours" min="0" max="24" value="0" placeholder="Hrs">
-            <input type="number" id="minutes" min="0" max="59" value="0" placeholder="Mins">
+    <div class="main-container">
+        <!-- Original Content Area -->
+        <div class="content-area">
+            <h1>ESPASIO</h1>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('main')">New</button>
+                <button class="tab" onclick="switchTab('active')">Active</button>
+                <button class="tab" onclick="switchTab('inactive')">History</button>
+                <button class="tab" onclick="switchTab('report')">Report</button>
+            </div>
+            
+            <div id="main" class="tab-content active">
+                <div class="form-group">
+                    <label for="space-name">Select Space</label>
+                    <select id="space-name">
+                        <option value="" disabled selected>Select space</option>
+                        <option value="Desk Zone">Desk Zone</option>
+                        <option value="Flex Space">Flex Space</option>
+                        <option value="Hangout for Two">Hangout for Two</option>
+                        <option value="Hangout for Three">Hangout for Three</option>
+                    </select>
+                    <input type="text" id="user-name" placeholder="Enter user name" class="user-input">
+                </div>
+                <div class="form-group">
+                    <label for="pax">Number of Persons (PAX)</label>
+                    <input type="number" id="pax" min="1" value="1" placeholder="Enter number of persons">
+                </div>
+                <div class="form-group">
+                    <label>Duration</label>
+                    <div class="duration-inputs">
+                        <input type="number" id="hours" min="0" max="24" value="0" placeholder="Hrs">
+                        <input type="number" id="minutes" min="0" max="59" value="0" placeholder="Mins">
+                    </div>
+                </div>
+                <button onclick="showPaymentPopup()">Payment</button>
+                <div class="sound-test">
+                    <button class="secondary" onclick="testWarningSound()">Test Warning</button>
+                    <button class="secondary" onclick="testTimeoutSound()">Test Timeout</button>
+                </div>
+            </div>
+            
+            <div id="active" class="tab-content">
+                <div id="active-sessions-container"></div>
+            </div>
+            
+            <div id="inactive" class="tab-content">
+                <div id="inactive-sessions-container"></div>
+            </div>
+            
+            <div id="report" class="tab-content">
+                <div id="report-container">
+                    <div class="report-header">Daily Report</div>
+                    <div class="report-section">
+                        <div class="report-row">
+                            <span class="report-label">Active Sessions:</span>
+                            <span id="report-active-count">0</span>
+                        </div>
+                        <div class="report-row">
+                            <span class="report-label">Completed Today:</span>
+                            <span id="report-completed-count">0</span>
+                        </div>
+                    </div>
+                    <div class="report-section">
+                        <div class="report-row">
+                            <span class="report-label">Total Earnings:</span>
+                            <span id="report-total-earnings">₱0.00</span>
+                        </div>
+                        <div class="report-row">
+                            <span class="report-label">Overtime Fees:</span>
+                            <span id="report-overtime-fees">₱0.00</span>
+                        </div>
+                        <div class="report-total">
+                            <span>Total Revenue:</span>
+                            <span id="report-total-revenue">₱0.00</span>
+                        </div>
+                    </div>
+                    <button onclick="generateDailyReport()" style="margin-top: 15px;">Generate Report</button>
+                </div>
+            </div>
         </div>
-    </div>
-    <button onclick="showPaymentPopup()">Payment</button>
-    <div class="sound-test">
-        <button class="secondary" onclick="testWarningSound()">Test Warning</button>
-        <button class="secondary" onclick="testTimeoutSound()">Test Timeout</button>
-    </div>
-</div>
-
-<div id="active" class="tab-content">
-    <div id="active-sessions-container"></div>
-</div>
-
-<div id="inactive" class="tab-content">
-    <div class="daily-summary">
-        <div class="summary-header">Today's Summary</div>
-        <div class="summary-row">
-            <span>Total Earnings:</span>
-            <span id="today-earnings">₱0</span>
-        </div>
-        <div class="summary-row">
-            <span>Total PAX:</span>
-            <span id="today-pax">0</span>
-        </div>
-        <div class="summary-total" id="space-breakdown">
-            <!-- Space breakdown will be inserted here -->
-        </div>
-    </div>
-    <div id="inactive-sessions-container"></div>
-</div>
-
-<!-- NEW REPORT TAB CONTENT -->
-<div id="report" class="tab-content">
-    <div class="report-controls no-print">
-        <select id="report-period">
-            <option value="today">Today</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-            <option value="year">This Year</option>
-        </select>
         
-        <select id="report-space">
-            <option value="all">All Spaces</option>
-            <option value="Desk Zone">Desk Zone</option>
-            <option value="Flex Space">Flex Space</option>
-            <option value="Hangout">Hangout</option>
-        </select>
-        
-        <button onclick="generateReport()">Generate</button>
-    </div>
-
-    <div class="report-results" id="report-results">
-        <!-- Report will be generated here -->
+        <!-- New Store Panel -->
+        <div class="store-panel">
+            <div class="store-logo">
+                <img src="ESPASIO.png" alt="ESPASIO Logo">
+            </div>
+            
+            <div class="product-categories">
+                <select class="category-select" id="category-select">
+                    <option value="all">All Categories</option>
+                    <!-- Categories will be added dynamically -->
+                </select>
+            </div>
+            
+            <div class="product-grid" id="product-grid">
+                <!-- Products will be added dynamically -->
+            </div>
+            
+            <div class="cart-container">
+                <div class="cart-title">Your Cart</div>
+                <div id="cart-items">
+                    <!-- Cart items will be added dynamically -->
+                </div>
+                <div class="cart-total">
+                    Total: ₱<span id="cart-total">0</span>
+                </div>
+                <button class="checkout-btn" onclick="showCheckoutPopup()">Checkout</button>
+            </div>
+            
+            <!-- Admin button (hidden by default) -->
+            <button id="admin-btn" style="display:none; margin-top:20px;" onclick="showProductManagement()">
+                Manage Products
+            </button>
+        </div>
     </div>
     
-    <button class="print-button no-print" onclick="printReport()">Print Report</button>
-</div>
-
-<audio id="warning-alarm" preload="auto">
-    <source src="sounds/warning.mp3" type="audio/mpeg">
-    <source src="sounds/warning.ogg" type="audio/ogg">
-</audio>
-
-<audio id="timeout-alarm" preload="auto">
-    <source src="sounds/timeout.mp3" type="audio/mpeg">
-    <source src="sounds/timeout.ogg" type="audio/ogg">
-</audio>
-
-<script>
-// ========== EXISTING JAVASCRIPT (NO CHANGES) ==========
-// Global variables
-let activeSessions = [];
-let inactiveSessions = [];
-let editingSessionId = null;
-let editingInputElement = null;
-let isEditing = false;
-let alarmInterval;
-let saveInterval;
-let storedWifiPassword = localStorage.getItem('wifiPassword') || '';
-let sessionExtensions = {}; // Track extensions made to sessions
-
-// Get icon for space type
-function getSpaceIcon(spaceName) {
-    if (spaceName.includes("Desk")) return "desk.png";
-    if (spaceName.includes("Flex")) return "flex.png";
-    if (spaceName.includes("Hangout")) return "hangout.png";
-    return "";
-}
-
-// Tab switching
-function switchTab(tabId) {
-    if (isEditing) {
-        saveUserName(editingSessionId);
-    }
-    document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-    document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
-    document.getElementById(tabId).classList.add('active');
-    if (tabId === 'active') {
-        displayActiveSessions();
-    } else if (tabId === 'inactive') {
-        displayInactiveSessions();
-    } else if (tabId === 'report') {
-        generateReport(); // Auto-generate report when switching to report tab
-    }
-}
-
-// Show payment popup with correct pricing
-function showPaymentPopup() {
-    const spaceName = document.getElementById('space-name').value;
-    const userName = document.getElementById('user-name').value.trim();
-    const pax = parseInt(document.getElementById('pax').value) || 1;
-    const hours = parseInt(document.getElementById('hours').value) || 0;
-    const minutes = parseInt(document.getElementById('minutes').value) || 0;
-
-    if (!spaceName) {
-        alert('Please select a space');
-        return;
-    }
-
-    if (hours === 0 && minutes === 0) {
-        alert('Please set a duration');
-        return;
-    }
-
-    // Calculate end time
-    const timeIn = new Date();
-    const totalMilliseconds = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
-    const timeOut = new Date(timeIn.getTime() + totalMilliseconds);
-
-    // Pricing structure (maintaining original + 30min rates)
-    const isDeskZone = spaceName.includes("Desk");
-    const pricePer30Min = isDeskZone ? 25 : 30; // 25php for Desk, 30php for others
-    const pricePerHour = isDeskZone ? 39 : 49; // Original hourly rates
-
-    // Calculate total amount
-    const totalMinutes = (hours * 60) + minutes;
-    let totalAmount = 0;
-
-    if (totalMinutes <= 30) {
-        // Apply 30min rate
-        totalAmount = pricePer30Min * pax;
-    } else {
-        // Original pricing calculation
-        const fullHours = Math.floor(totalMinutes / 60);
-        const remainingMins = totalMinutes % 60;
-        totalAmount = (fullHours * pricePerHour * pax) +
-            (Math.ceil(remainingMins / 30) * pricePer30Min * pax);
-    }
-
-    // Create popup window
-    const popup = window.open('', 'Receipt', 'width=350,height=600');
-    popup.document.write(`
-        <html>
-        <head>
-            <title>ESPASIO Receipt</title>
-            <style>
-                ${document.querySelector('style').innerHTML}
-            </style>
-        </head>
-        <body>
-            <div class="receipt-popup">
-                <div class="receipt-header">
-                    <img src="ESPASIO.png" alt="Espasio Logo" class="receipt-logo">
-                    <div class="receipt-title">Study Hub | Co-Working Space</div>
+    <!-- PRODUCT MANAGEMENT MODAL -->
+    <div class="product-management" id="product-management">
+        <div class="management-container">
+            <div class="management-header">
+                <div class="management-title">Product Management</div>
+                <button class="close-management" onclick="hideProductManagement()">Close</button>
+            </div>
+            
+            <div class="product-form">
+                <div class="form-group">
+                    <label for="product-name">Product Name</label>
+                    <input type="text" id="product-name">
                 </div>
+                <div class="form-group">
+                    <label for="product-price">Price (₱)</label>
+                    <input type="number" id="product-price" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="product-category">Category</label>
+                    <input type="text" id="product-category" list="categories-list">
+                    <datalist id="categories-list">
+                        <!-- Categories will be added dynamically -->
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label for="product-stock">Stock Quantity</label>
+                    <input type="number" id="product-stock" min="0">
+                </div>
+                <div class="form-group full-width">
+                    <label for="product-image">Image</label>
+                    <input type="file" id="product-image" accept="image/*">
+                    <img id="image-preview" class="image-preview" style="display:none;">
+                </div>
+                <div class="form-group full-width">
+                    <label for="product-description">Description (Optional)</label>
+                    <input type="text" id="product-description">
+                </div>
+            </div>
+            
+            <button class="save-btn" onclick="saveProduct()">Save Product</button>
+            
+            <div class="product-list" id="product-list">
+                <!-- Product list will be added dynamically -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Original Audio Elements -->
+    <audio id="warning-alarm" preload="auto">
+        <source src="sounds/warning.mp3" type="audio/mpeg">
+        <source src="sounds/warning.ogg" type="audio/ogg">
+    </audio>
+    <audio id="timeout-alarm" preload="auto">
+        <source src="sounds/timeout.mp3" type="audio/mpeg">
+        <source src="sounds/timeout.ogg" type="audio/ogg">
+    </audio>
 
+    <script>
+        // ========== ORIGINAL JAVASCRIPT ==========
+        // Global variables
+        let activeSessions = [];
+        let inactiveSessions = [];
+        let editingSessionId = null;
+        let editingInputElement = null;
+        let isEditing = false;
+        let alarmInterval;
+        let saveInterval;
+        let storedWifiPassword = '';
+
+        // Get icon for space type
+        function getSpaceIcon(spaceName) {
+            if (spaceName.includes("Desk")) return "desk.png";
+            if (spaceName.includes("Flex")) return "flex.png";
+            if (spaceName.includes("Hangout")) return "hangout.png";
+            return "";
+        }
+
+        // Tab switching
+        function switchTab(tabId) {
+            if (isEditing) {
+                saveUserName(editingSessionId);
+            }
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            if (tabId === 'active') {
+                displayActiveSessions();
+            } else if (tabId === 'inactive') {
+                displayInactiveSessions();
+            } else if (tabId === 'report') {
+                updateReport();
+            }
+        }
+
+        // Show payment popup with correct pricing
+        function showPaymentPopup() {
+            const spaceName = document.getElementById('space-name').value;
+            const userName = document.getElementById('user-name').value.trim();
+            const pax = parseInt(document.getElementById('pax').value) || 1;
+            const hours = parseInt(document.getElementById('hours').value) || 0;
+            const minutes = parseInt(document.getElementById('minutes').value) || 0;
+
+            if (!spaceName) {
+                alert('Please select a space');
+                return;
+            }
+
+            if (hours === 0 && minutes === 0) {
+                alert('Please set a duration');
+                return;
+            }
+
+            // Calculate end time
+            const timeIn = new Date();
+            const totalMilliseconds = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
+            const timeOut = new Date(timeIn.getTime() + totalMilliseconds);
+
+            // Pricing structure (maintaining original + 30min rates)
+            const isDeskZone = spaceName.includes("Desk");
+            const pricePer30Min = isDeskZone ? 25 : 30; // 25php for Desk, 30php for others
+            const pricePerHour = isDeskZone ? 39 : 49; // Original hourly rates
+
+            // Calculate total amount
+            const totalMinutes = (hours * 60) + minutes;
+            let totalAmount = 0;
+
+            if (totalMinutes <= 30) {
+                // Apply 30min rate
+                totalAmount = pricePer30Min * pax;
+            } else {
+                // Original pricing calculation
+                const fullHours = Math.floor(totalMinutes / 60);
+                const remainingMins = totalMinutes % 60;
+                totalAmount = (fullHours * pricePerHour * pax) +
+                    (Math.ceil(remainingMins / 30) * pricePer30Min * pax);
+            }
+
+            // Create popup window
+            const popup = window.open('', 'Receipt', 'width=350,height=600');
+            popup.document.write(`
+                <html>
+                <head>
+                    <title>ESPASIO Receipt</title>
+                    <style>
+                        ${document.querySelector('style').innerHTML}
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt-popup">
+                        <div class="receipt-header">
+                            <img src="ESPASIO.png" alt="Espasio Logo" class="receipt-logo">
+                            <div class="receipt-title">ESPASIO</div>
+                            <div>Co-Working Space</div>
+                        </div>
+
+                        <div class="receipt-details">
+                            <div class="receipt-row">
+                                <span class="receipt-label">Customer:</span>
+                                <span>${userName}</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">Space:</span>
+                                <span>${spaceName}</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">Pax:</span>
+                                <span>${pax}</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">Time In:</span>
+                                <span>${formatDateTime(timeIn)}</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">Time Out:</span>
+                                <span>${formatDateTime(timeOut)}</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">Duration:</span>
+                                <span>${hours}h ${minutes}m</span>
+                            </div>
+
+                            <div class="receipt-divider"></div>
+
+                            <div class="receipt-row receipt-total">
+                                <span>Total Amount:</span>
+                                <span>₱${totalAmount.toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        <div class="payment-inputs no-print">
+                            <div class="payment-input-group">
+                                <label for="popupAmount">Amount Received:</label>
+                                <input type="number" id="popupAmount" min="${totalAmount}" step="0.01"
+                                    placeholder="Enter amount" oninput="calculateChange()">
+                            </div>
+                            <div class="payment-input-group">
+                                <label for="popupChange">Change:</label>
+                                <input type="text" id="popupChange" readonly>
+                            </div>
+                            <div class="payment-input-group">
+                                <label for="popupWifiPassword">WiFi Password:</label>
+                                <input type="text" id="popupWifiPassword"
+                                    value="${storedWifiPassword}" placeholder="Enter WiFi password">
+                            </div>
+                        </div>
+
+                        <div class="receipt-details">
+                            <div class="receipt-divider"></div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">WiFi Network:</span>
+                                <span>ESPASIO</span>
+                            </div>
+                            <div class="receipt-row">
+                                <span class="receipt-label">Password:</span>
+                                <span id="receiptPassword">${storedWifiPassword || '______'}</span>
+                            </div>
+                        </div>
+
+                        <div class="receipt-footer no-print">
+                            <button onclick="confirmPayment()" style="
+                                background: #003300;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                border-radius: 3px;
+                                cursor: pointer;
+                                font-size: 14px;
+                                margin-top: 10px;
+                            ">Confirm & Print</button>
+                        </div>
+
+                        <div class="receipt-footer">
+                            Thank you for choosing ESPASIO!
+                        </div>
+                    </div>
+
+                    <script>
+                        function calculateChange() {
+                            const amount = parseFloat(document.getElementById('popupAmount').value) || 0;
+                            const total = ${totalAmount};
+                            const change = amount - total;
+                            document.getElementById('popupChange').value = change >= 0 ? '₱' + change.toFixed(2) : '';
+
+                            // Update WiFi password display
+                            const wifiPass = document.getElementById('popupWifiPassword').value;
+                            document.getElementById('receiptPassword').textContent = wifiPass || '______';
+                        }
+
+                        function confirmPayment() {
+                            const amount = parseFloat(document.getElementById('popupAmount').value) || 0;
+                            const total = ${totalAmount};
+
+                            if (amount < total) {
+                                alert('Amount received cannot be less than total amount');
+                                return;
+                            }
+
+                            // Store WiFi password
+                            const wifiPassword = document.getElementById('popupWifiPassword').value;
+                            if (wifiPassword) {
+                                window.opener.storedWifiPassword = wifiPassword;
+                            }
+
+                            // Create the session in the main window
+                            window.opener.createSessionAfterPayment(
+                                '${spaceName}',
+                                '${userName}',
+                                ${pax},
+                                '${timeIn.toISOString()}',
+                                '${timeOut.toISOString()}'
+                            );
+
+                            // Print the receipt
+                            setTimeout(() => {
+                                window.print();
+                                window.close();
+                            }, 500);
+                        }
+
+                        // Initialize change calculation
+                        document.getElementById('popupAmount').addEventListener('input', calculateChange);
+                        document.getElementById('popupWifiPassword').addEventListener('input', function() {
+                            document.getElementById('receiptPassword').textContent = this.value || '______';
+                        });
+                    <\/script>
+                </body>
+                </html>
+            `);
+        }
+
+        // Create session after payment (called from popup)
+        function createSessionAfterPayment(spaceName, userName, pax, timeIn, timeOut) {
+            const session = {
+                id: Date.now(),
+                spaceName,
+                userName,
+                pax,
+                timeIn: new Date(timeIn),
+                timeOut: new Date(timeOut),
+                warningTriggered: false,
+                showTimeoutButton: false,
+                overtimeFee: 0
+            };
+
+            activeSessions.push(session);
+            displayActiveSessions();
+            switchTab('active');
+
+            // Reset form
+            document.getElementById('space-name').selectedIndex = 0;
+            document.getElementById('user-name').value = '';
+            document.getElementById('pax').value = '1';
+            document.getElementById('hours').value = '0';
+            document.getElementById('minutes').value = '0';
+
+            saveSessions();
+        }
+
+        // Calculate overtime fee multiplied by PAX
+        function calculateOvertimeFee(session) {
+            const overtimeMins = Math.floor((new Date() - session.timeOut) / 60000);
+            if (overtimeMins <= 0) return 0;
+            const isDeskZone = session.spaceName.includes("Desk");
+            let fee = 0;
+            let remainingMins = overtimeMins;
+            while (remainingMins > 0) {
+                if (remainingMins <= 30) {
+                    fee += isDeskZone ? 25 : 30;
+                    remainingMins = 0;
+                } else {
+                    fee += isDeskZone ? 39 : 49;
+                    remainingMins -= 60;
+                }
+            }
+            return fee * session.pax;
+        }
+
+        // Edit user name
+        function editUserName(id) {
+            // If already editing, save first
+            if (isEditing && editingSessionId !== id) {
+                saveUserName(editingSessionId);
+            }
+            isEditing = true;
+            editingSessionId = id;
+            const container = document.getElementById('active-sessions-container');
+            const sessionIndex = activeSessions.findIndex(s => s.id === id);
+            if (sessionIndex !== -1) {
+                const session = activeSessions[sessionIndex];
+                const now = new Date();
+                const remainingTime = session.timeOut - now;
+                const overtimeMs = Math.max(0, now - session.timeOut);
+                const overtimeMins = Math.floor(overtimeMs / 60000);
+                const overtimeHours = Math.floor(overtimeMins / 60);
+                const remainingOvertimeMins = overtimeMins % 60;
+                const overtimeText = overtimeMs > 0 ?
+                    `Overtime: ${overtimeHours}h ${remainingOvertimeMins}m` : '';
+                let remainingText = formatTime(remainingTime);
+                let timeClass = '';
+                if (remainingTime <= 0) {
+                    remainingText = 'TIME OUT';
+                    timeClass = 'expired';
+                } else if (remainingTime <= 3 * 60 * 1000) {
+                    timeClass = 'warning';
+                }
+                const cardHTML = `
+                    <div class="session-card">
+                        <div class="session-header">
+                            <div>
+                                <span class="session-name">
+                                    <img src="${getSpaceIcon(session.spaceName)}" class="space-icon" alt="${session.spaceName}">
+                                    ${session.spaceName} (${session.pax})
+                                </span>
+                                <input type="text" class="user-name-input" data-id="${session.id}"
+                                    value="${session.userName || ''}"
+                                    placeholder="Name"
+                                    onkeypress="handleNameInput(event, ${session.id})">
+                            </div>
+                            <button class="secondary" onclick="endSession(${session.id})">End</button>
+                        </div>
+                        <div class="time-info">
+                            <div class="time-row">
+                                <span class="time-label">In:</span>
+                                <span>${formatDateTime(session.timeIn)}</span>
+                            </div>
+                            <div class="time-row">
+                                <span class="time-label">Out:</span>
+                                <span>${formatDateTime(session.timeOut)}</span>
+                            </div>
+                        </div>
+                        <div class="remaining-time ${timeClass}">
+                            ${remainingText}
+                            ${overtimeText ? `<div class="overtime-duration">${overtimeText}</div>` : ''}
+                        </div>
+                        ${remainingTime <= 0 ? `
+                            <div class="overtime-fee">
+                                Overtime Fee: ₱${calculateOvertimeFee(session).toFixed(2)} (${session.pax} pax)
+                            </div>
+                            <button class="alarm-btn" onclick="playTimeoutAlarm(${session.id})">
+                                Play Timeout Alarm
+                            </button>
+                        ` : ''}
+                        <div class="time-adjustments">
+                            <div class="minute-adjustments">
+                                <button onclick="adjustSessionTime(${session.id}, 1)">+1m</button>
+                                <button onclick="adjustSessionTime(${session.id}, 5)">+5m</button>
+                                <button onclick="adjustSessionTime(${session.id}, -1)">-1m</button>
+                                <button onclick="adjustSessionTime(${session.id}, -5)">-5m</button>
+                            </div>
+                            <div class="hour-adjustments">
+                                <button onclick="adjustSessionTime(${session.id}, 30)">+30m</button>
+                                <button onclick="adjustSessionTime(${session.id}, 60)">+1h</button>
+                                <button onclick="adjustSessionTime(${session.id}, -30)">-30m</button>
+                                <button onclick="adjustSessionTime(${session.id}, -60)">-1h</button>
+                            </div>
+                        </div>
+                        <div class="time-stamp">${formatFullDateTime(session.timeIn)}</div>
+                    </div>
+                `;
+                const cards = container.querySelectorAll('.session-card');
+                if (cards[sessionIndex]) {
+                    cards[sessionIndex].outerHTML = cardHTML;
+                }
+                setTimeout(() => {
+                    editingInputElement = document.querySelector(`.user-name-input[data-id="${id}"]`);
+                    if (editingInputElement) {
+                        editingInputElement.focus();
+                        editingInputElement.addEventListener('blur', handleBlur);
+                        document.addEventListener('click', handleClickOutside);
+                    }
+                }, 10);
+            }
+        }
+
+        function handleBlur() {
+            saveUserName(editingSessionId);
+        }
+
+        function handleClickOutside(e) {
+            if (editingInputElement && !editingInputElement.contains(e.target)) {
+                saveUserName(editingSessionId);
+            }
+        }
+
+        // Save user name
+        function saveUserName(id) {
+            if (!isEditing) return;
+            const input = document.querySelector(`.user-name-input[data-id="${id}"]`);
+            if (input) {
+                const session = activeSessions.find(s => s.id === id);
+                if (session) {
+                    session.userName = input.value.trim();
+                    editingSessionId = null;
+                    editingInputElement = null;
+                    isEditing = false;
+                    if (input) {
+                        input.removeEventListener('blur', handleBlur);
+                    }
+                    document.removeEventListener('click', handleClickOutside);
+                    displayActiveSessions();
+                    saveSessions();
+                }
+            }
+        }
+
+        function handleNameInput(event, id) {
+            if (event.key === 'Enter') {
+                saveUserName(id);
+            }
+        }
+
+        function playTimeoutAlarm(id) {
+            const session = activeSessions.find(s => s.id === id);
+            if (session) {
+                playTimeoutSound();
+            }
+        }
+
+        function adjustSessionTime(id, minutes) {
+            const session = activeSessions.find(s => s.id === id);
+            if (session) {
+                session.timeOut = new Date(session.timeOut.getTime() + minutes * 60000);
+                session.warningTriggered = false;
+                session.showTimeoutButton = false;
+                displayActiveSessions();
+                saveSessions();
+            }
+        }
+
+        function displayActiveSessions() {
+            if (isEditing) return;
+            const container = document.getElementById('active-sessions-container');
+            container.innerHTML = '';
+            if (activeSessions.length === 0) {
+                container.innerHTML = '<div class="empty-state">No active sessions</div>';
+                return;
+            }
+            const now = new Date();
+            const sortedSessions = [...activeSessions].sort((a, b) => {
+                return (a.timeOut - now) - (b.timeOut - now);
+            });
+            sortedSessions.forEach(session => {
+                const remainingTime = session.timeOut - now;
+                session.overtimeFee = calculateOvertimeFee(session);
+                // Calculate overtime duration
+                const overtimeMs = Math.max(0, now - session.timeOut);
+                const overtimeMins = Math.floor(overtimeMs / 60000);
+                const overtimeHours = Math.floor(overtimeMins / 60);
+                const remainingOvertimeMins = overtimeMins % 60;
+                const overtimeText = overtimeMs > 0 ?
+                    `Overtime: ${overtimeHours}h ${remainingOvertimeMins}m` : '';
+                const card = document.createElement('div');
+                card.className = 'session-card';
+                let remainingText = formatTime(remainingTime);
+                let timeClass = '';
+                if (remainingTime <= 0) {
+                    remainingText = 'TIME OUT';
+                    timeClass = 'expired';
+                    session.showTimeoutButton = true;
+                } else if (remainingTime <= 3 * 60 * 1000) {
+                    timeClass = 'warning';
+                }
+                let userNameDisplay;
+                const displayName = session.userName || '[click to add name]';
+                userNameDisplay = `<span class="user-name" onclick="editUserName(${session.id})">${displayName}</span>`;
+                let timeoutButton = '';
+                if (session.showTimeoutButton) {
+                    timeoutButton = `
+                        <button class="alarm-btn" onclick="playTimeoutAlarm(${session.id})">
+                            Play Timeout Alarm
+                        </button>
+                    `;
+                }
+                let overtimeDisplay = '';
+                if (remainingTime <= 0) {
+                    overtimeDisplay = `
+                        <div class="overtime-fee">
+                            Overtime Fee: ₱${session.overtimeFee.toFixed(2)} (${session.pax} pax)
+                        </div>
+                    `;
+                }
+                card.innerHTML = `
+                    <div class="session-header">
+                        <div>
+                            <span class="session-name">
+                                <img src="${getSpaceIcon(session.spaceName)}" class="space-icon" alt="${session.spaceName}">
+                                ${session.spaceName} (${session.pax})
+                            </span>
+                            ${userNameDisplay}
+                        </div>
+                        <button class="secondary" onclick="endSession(${session.id})">End</button>
+                    </div>
+                    <div class="time-info">
+                        <div class="time-row">
+                            <span class="time-label">In:</span>
+                            <span>${formatDateTime(session.timeIn)}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Out:</span>
+                            <span>${formatDateTime(session.timeOut)}</span>
+                        </div>
+                    </div>
+                    <div class="remaining-time ${timeClass}">
+                        ${remainingText}
+                        ${overtimeText ? `<div class="overtime-duration">${overtimeText}</div>` : ''}
+                    </div>
+                    ${overtimeDisplay}
+                    ${timeoutButton}
+                    <div class="time-adjustments">
+                        <div class="minute-adjustments">
+                            <button onclick="adjustSessionTime(${session.id}, 1)">+1m</button>
+                            <button onclick="adjustSessionTime(${session.id}, 5)">+5m</button>
+                            <button onclick="adjustSessionTime(${session.id}, -1)">-1m</button>
+                            <button onclick="adjustSessionTime(${session.id}, -5)">-5m</button>
+                        </div>
+                        <div class="hour-adjustments">
+                            <button onclick="adjustSessionTime(${session.id}, 30)">+30m</button>
+                            <button onclick="adjustSessionTime(${session.id}, 60)">+1h</button>
+                            <button onclick="adjustSessionTime(${session.id}, -30)">-30m</button>
+                            <button onclick="adjustSessionTime(${session.id}, -60)">-1h</button>
+                        </div>
+                    </div>
+                    <div class="time-stamp">${formatFullDateTime(session.timeIn)}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function displayInactiveSessions() {
+            const container = document.getElementById('inactive-sessions-container');
+            container.innerHTML = '';
+            if (inactiveSessions.length === 0) {
+                container.innerHTML = '<div class="empty-state">No session history</div>';
+                return;
+            }
+            inactiveSessions.forEach(session => {
+                const card = document.createElement('div');
+                card.className = 'session-card';
+                let feeDisplay = '';
+                if (session.overtimeFee > 0) {
+                    feeDisplay = `<div class="overtime-fee">Overtime Paid: ₱${session.overtimeFee.toFixed(2)} (${session.pax} pax)</div>`;
+                }
+                card.innerHTML = `
+                    <div class="session-header">
+                        <div class="session-name">
+                            <img src="${getSpaceIcon(session.spaceName)}" class="space-icon" alt="${session.spaceName}">
+                            ${session.spaceName} (${session.pax})${session.userName ? ' - ' + session.userName : ''}
+                        </div>
+                        <button class="secondary" onclick="deleteInactiveSession(${session.id})">Delete</button>
+                    </div>
+                    <div class="time-info">
+                        <div class="time-row">
+                            <span class="time-label">In:</span>
+                            <span>${formatDateTime(session.timeIn)}</span>
+                        </div>
+                        <div class="time-row">
+                            <span class="time-label">Out:</span>
+                            <span>${formatDateTime(session.timeOut)}</span>
+                        </div>
+                    </div>
+                    ${feeDisplay}
+                    <div class="time-stamp">${formatFullDateTime(session.timeIn)}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // ========== REPORT FUNCTIONS ==========
+        function updateReport() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // Count active sessions
+            document.getElementById('report-active-count').textContent = activeSessions.length;
+            
+            // Count completed sessions today
+            const completedToday = inactiveSessions.filter(session => {
+                return new Date(session.completedTime) >= today;
+            }).length;
+            document.getElementById('report-completed-count').textContent = completedToday;
+            
+            // Calculate earnings
+            let totalEarnings = 0;
+            let overtimeFees = 0;
+            
+            // Calculate from inactive sessions (completed bookings)
+            inactiveSessions.forEach(session => {
+                const durationMs = session.timeOut - session.timeIn;
+                const hours = Math.floor(durationMs / (1000 * 60 * 60));
+                const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+                
+                const isDeskZone = session.spaceName.includes("Desk");
+                const pricePer30Min = isDeskZone ? 25 : 30;
+                const pricePerHour = isDeskZone ? 39 : 49;
+                
+                const totalMinutes = (hours * 60) + minutes;
+                let sessionTotal = 0;
+                
+                if (totalMinutes <= 30) {
+                    sessionTotal = pricePer30Min * session.pax;
+                } else {
+                    const fullHours = Math.floor(totalMinutes / 60);
+                    const remainingMins = totalMinutes % 60;
+                    sessionTotal = (fullHours * pricePerHour * session.pax) +
+                        (Math.ceil(remainingMins / 30) * pricePer30Min * session.pax);
+                }
+                
+                totalEarnings += sessionTotal;
+                overtimeFees += session.overtimeFee || 0;
+            });
+            
+            // Calculate from active sessions (ongoing bookings)
+            activeSessions.forEach(session => {
+                const durationMs = session.timeOut - session.timeIn;
+                const hours = Math.floor(durationMs / (1000 * 60 * 60));
+                const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+                
+                const isDeskZone = session.spaceName.includes("Desk");
+                const pricePer30Min = isDeskZone ? 25 : 30;
+                const pricePerHour = isDeskZone ? 39 : 49;
+                
+                const totalMinutes = (hours * 60) + minutes;
+                let sessionTotal = 0;
+                
+                if (totalMinutes <= 30) {
+                    sessionTotal = pricePer30Min * session.pax;
+                } else {
+                    const fullHours = Math.floor(totalMinutes / 60);
+                    const remainingMins = totalMinutes % 60;
+                    sessionTotal = (fullHours * pricePerHour * session.pax) +
+                        (Math.ceil(remainingMins / 30) * pricePer30Min * session.pax);
+                }
+                
+                totalEarnings += sessionTotal;
+                
+                // Add any current overtime fees for active sessions
+                const now = new Date();
+                if (now > session.timeOut) {
+                    overtimeFees += calculateOvertimeFee(session);
+                }
+            });
+            
+            document.getElementById('report-total-earnings').textContent = `₱${totalEarnings.toFixed(2)}`;
+            document.getElementById('report-overtime-fees').textContent = `₱${overtimeFees.toFixed(2)}`;
+            document.getElementById('report-total-revenue').textContent = `₱${(totalEarnings + overtimeFees).toFixed(2)}`;
+        }
+
+        function generateDailyReport() {
+            updateReport();
+            const popup = window.open('', 'Daily Report', 'width=600,height=800');
+            
+            const today = new Date();
+            const dateStr = today.toLocaleDateString();
+            
+            popup.document.write(`
+                <html>
+                <head>
+                    <title>ESPASIO Daily Report</title>
+                    <style>
+                        body {
+                            font-family: 'Segoe UI', sans-serif;
+                            padding: 20px;
+                        }
+                        .report-header {
+                            text-align: center;
+                            margin-bottom: 20px;
+                        }
+                        .report-title {
+                            font-size: 24px;
+                            font-weight: bold;
+                            margin-bottom: 5px;
+                        }
+                        .report-date {
+                            font-size: 16px;
+                            color: #666;
+                        }
+                        .report-section {
+                            margin-bottom: 20px;
+                            border-bottom: 1px solid #eee;
+                            padding-bottom: 15px;
+                        }
+                        .section-title {
+                            font-size: 18px;
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                        }
+                        .report-row {
+                            display: flex;
+                            justify-content: space-between;
+                            margin-bottom: 5px;
+                        }
+                        .report-label {
+                            font-weight: bold;
+                        }
+                        .report-total {
+                            font-weight: bold;
+                            border-top: 1px solid #ddd;
+                            padding-top: 5px;
+                            margin-top: 10px;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 10px;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: left;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="report-header">
+                        <div class="report-title">ESPASIO Daily Report</div>
+                        <div class="report-date">${dateStr}</div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <div class="section-title">Summary</div>
+                        <div class="report-row">
+                            <span class="report-label">Active Sessions:</span>
+                            <span>${activeSessions.length}</span>
+                        </div>
+                        <div class="report-row">
+                            <span class="report-label">Completed Today:</span>
+                            <span>${inactiveSessions.filter(s => new Date(s.completedTime) >= new Date().setHours(0,0,0,0)).length}</span>
+                        </div>
+                        <div class="report-row">
+                            <span class="report-label">Total Earnings:</span>
+                            <span id="popup-total-earnings">₱0.00</span>
+                        </div>
+                        <div class="report-row">
+                            <span class="report-label">Overtime Fees:</span>
+                            <span id="popup-overtime-fees">₱0.00</span>
+                        </div>
+                        <div class="report-total">
+                            <span>Total Revenue:</span>
+                            <span id="popup-total-revenue">₱0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="report-section">
+                        <div class="section-title">Active Sessions</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Space</th>
+                                    <th>Customer</th>
+                                    <th>Pax</th>
+                                    <th>Time In</th>
+                                    <th>Time Out</th>
+                                </tr>
+                            </thead>
+                            <tbody id="popup-active-sessions">
+                                <!-- Active sessions will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="report-section">
+                        <div class="section-title">Completed Sessions Today</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Space</th>
+                                    <th>Customer</th>
+                                    <th>Pax</th>
+                                    <th>Time In</th>
+                                    <th>Time Out</th>
+                                    <th>Overtime Fee</th>
+                                </tr>
+                            </thead>
+                            <tbody id="popup-completed-sessions">
+                                <!-- Completed sessions will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <script>
+                        // Update summary numbers
+                        document.getElementById('popup-total-earnings').textContent = document.getElementById('report-total-earnings').textContent;
+                        document.getElementById('popup-overtime-fees').textContent = document.getElementById('report-overtime-fees').textContent;
+                        document.getElementById('popup-total-revenue').textContent = document.getElementById('report-total-revenue').textContent;
+                        
+                        // Add active sessions
+                        const activeContainer = document.getElementById('popup-active-sessions');
+                        window.opener.activeSessions.forEach(session => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = \`
+                                <td>\${session.spaceName}</td>
+                                <td>\${session.userName || 'N/A'}</td>
+                                <td>\${session.pax}</td>
+                                <td>\${window.opener.formatDateTime(session.timeIn)}</td>
+                                <td>\${window.opener.formatDateTime(session.timeOut)}</td>
+                            \`;
+                            activeContainer.appendChild(row);
+                        });
+                        
+                        // Add completed sessions today
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const completedContainer = document.getElementById('popup-completed-sessions');
+                        window.opener.inactiveSessions
+                            .filter(session => new Date(session.completedTime) >= today)
+                            .forEach(session => {
+                                const row = document.createElement('tr');
+                                row.innerHTML = \`
+                                    <td>\${session.spaceName}</td>
+                                    <td>\${session.userName || 'N/A'}</td>
+                                    <td>\${session.pax}</td>
+                                    <td>\${window.opener.formatDateTime(session.timeIn)}</td>
+                                    <td>\${window.opener.formatDateTime(session.timeOut)}</td>
+                                    <td>₱\${session.overtimeFee ? session.overtimeFee.toFixed(2) : '0.00'}</td>
+                                \`;
+                                completedContainer.appendChild(row);
+                            });
+                        
+                        // Auto-print and close after a short delay
+                        setTimeout(() => {
+                            window.print();
+                            window.close();
+                        }, 500);
+                    <\/script>
+                </body>
+                </html>
+            `);
+        }
+
+        function endSession(id) {
+            const index = activeSessions.findIndex(session => session.id === id);
+            if (index !== -1) {
+                const session = activeSessions[index];
+                session.completedTime = new Date();
+                session.overtimeFee = calculateOvertimeFee(session);
+                inactiveSessions.unshift(session);
+                activeSessions.splice(index, 1);
+                stopAlarms();
+                displayActiveSessions();
+                displayInactiveSessions();
+                saveSessions();
+                updateReport();
+            }
+        }
+
+        function deleteInactiveSession(id) {
+            const index = inactiveSessions.findIndex(session => session.id === id);
+            if (index !== -1) {
+                inactiveSessions.splice(index, 1);
+                displayInactiveSessions();
+                saveSessions();
+                updateReport();
+            }
+        }
+
+        function checkAlarms() {
+            if (isEditing) return;
+            const now = new Date();
+            activeSessions.forEach(session => {
+                const remainingTime = session.timeOut - now;
+                if (remainingTime <= 3 * 60 * 1000 && remainingTime > 0 && !session.warningTriggered) {
+                    session.warningTriggered = true;
+                    playWarningSound();
+                }
+                if (remainingTime <= 0) {
+                    session.showTimeoutButton = true;
+                }
+            });
+            displayActiveSessions();
+        }
+
+        function playWarningSound() {
+            const alarm = document.getElementById('warning-alarm');
+            alarm.currentTime = 0;
+            alarm.play().catch(e => console.log('Audio play failed:', e));
+        }
+
+        function playTimeoutSound() {
+            const alarm = document.getElementById('timeout-alarm');
+            alarm.currentTime = 0;
+            alarm.play().catch(e => console.log('Audio play failed:', e));
+        }
+
+        function stopAlarms() {
+            document.getElementById('warning-alarm').pause();
+            document.getElementById('timeout-alarm').pause();
+        }
+
+        function testWarningSound() {
+            playWarningSound();
+        }
+
+        function testTimeoutSound() {
+            playTimeoutSound();
+        }
+
+        function formatTime(milliseconds) {
+            if (isNaN(milliseconds)) {
+                const date = new Date(milliseconds);
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            if (milliseconds <= 0) return '00:00:00';
+            const seconds = Math.floor((milliseconds /1000) % 60);
+            const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
+            const hours = Math.floor((milliseconds / (1000 * 60 * 60)));
+            
+            return [
+                hours.toString().padStart(2, '0'),
+                minutes.toString().padStart(2, '0'),
+                seconds.toString().padStart(2, '0')
+            ].join(':');
+        }
+        
+        function formatDateTime(date) {
+            return date.toLocaleString([], { 
+                month: '2-digit', 
+                day: '2-digit', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+        
+        function formatFullDateTime(date) {
+            return date.toLocaleString([], { 
+                year: 'numeric',
+                month: '2-digit', 
+                day: '2-digit', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+        }
+        
+        function saveSessions() {
+            localStorage.setItem('activeSessions', JSON.stringify(activeSessions));
+            localStorage.setItem('inactiveSessions', JSON.stringify(inactiveSessions));
+        }
+        
+        function loadSessions() {
+            const savedActive = localStorage.getItem('activeSessions');
+            const savedInactive = localStorage.getItem('inactiveSessions');
+            
+            if (savedActive) {
+                activeSessions = JSON.parse(savedActive).map(session => ({
+                    ...session,
+                    timeIn: new Date(session.timeIn),
+                    timeOut: new Date(session.timeOut)
+                }));
+            }
+            
+            if (savedInactive) {
+                inactiveSessions = JSON.parse(savedInactive).map(session => ({
+                    ...session,
+                    timeIn: new Date(session.timeIn),
+                    timeOut: new Date(session.timeOut),
+                    completedTime: new Date(session.completedTime)
+                }));
+            }
+        }
+
+        // ========== NEW PRODUCT SYSTEM JAVASCRIPT ==========
+        // Product data structure
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        let categories = JSON.parse(localStorage.getItem('categories')) || [];
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let sales = JSON.parse(localStorage.getItem('sales')) || [];
+        let currentProductId = null;
+
+        // Initialize store panel
+        function initStorePanel() {
+            updateProductGrid();
+            updateCartDisplay();
+            updateCategoryDropdown();
+            
+            // Show admin button if in admin mode (you can set this however you want)
+            const isAdmin = true; // Change this based on your admin auth
+            document.getElementById('admin-btn').style.display = isAdmin ? 'block' : 'none';
+        }
+
+        // Update product grid display
+        function updateProductGrid(filterCategory = 'all') {
+            const productGrid = document.getElementById('product-grid');
+            productGrid.innerHTML = '';
+            
+            const filteredProducts = filterCategory === 'all' 
+                ? products 
+                : products.filter(p => p.category === filterCategory);
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                
+                const stockWarning = product.stock <= 5 
+                    ? `<div class="stock-warning">${product.stock <= 0 ? 'Out of stock' : `Only ${product.stock} left`}</div>`
+                    : '';
+                
+                productCard.innerHTML = `
+                    ${product.image ? `<img src="${product.image}" class="product-image">` : ''}
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">₱${product.price.toFixed(2)}</div>
+                    ${stockWarning}
+                    <button class="add-to-cart" onclick="addToCart(${product.id})" ${product.stock <= 0 ? 'disabled' : ''}>
+                        Add
+                    </button>
+                `;
+                
+                productGrid.appendChild(productCard);
+            });
+        }
+
+        // Update category dropdown
+        function updateCategoryDropdown() {
+            const categorySelect = document.getElementById('category-select');
+            const categoriesList = document.getElementById('categories-list');
+            
+            // Clear existing options except "All Categories"
+            while (categorySelect.options.length > 1) {
+                categorySelect.remove(1);
+            }
+            
+            categoriesList.innerHTML = '';
+            
+            categories.forEach(category => {
+                // Add to dropdown
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categorySelect.appendChild(option);
+                
+                // Add to datalist
+                const datalistOption = document.createElement('option');
+                datalistOption.value = category;
+                categoriesList.appendChild(datalistOption);
+            });
+            
+            // Add event listener for filtering
+            categorySelect.addEventListener('change', () => {
+                updateProductGrid(categorySelect.value);
+            });
+        }
+
+        // Add to cart function
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product || product.stock <= 0) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1
+                });
+            }
+            
+            // Update stock (will be finalized on checkout)
+            product.stock--;
+            
+            saveCart();
+            updateCartDisplay();
+            updateProductGrid(document.getElementById('category-select').value);
+        }
+
+        // Update cart display
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cart-items');
+            const cartTotal = document.getElementById('cart-total');
+            
+            cartItems.innerHTML = '';
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <span>${item.name} x${item.quantity}</span>
+                    <span>₱${itemTotal.toFixed(2)}</span>
+                `;
+                
+                cartItems.appendChild(cartItem);
+            });
+            
+            cartTotal.textContent = total.toFixed(2);
+        }
+
+        // Show checkout popup
+        function showCheckoutPopup() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            // Check if there's an active session
+            const activeSession = activeSessions.length > 0 ? activeSessions[0] : null;
+            
+            // Create popup window
+            const popup = window.open('', 'Checkout', 'width=350,height=600');
+            
+            let receiptContent = `
+                <html>
+                <head>
+                    <title>ESPASIO Checkout</title>
+                    <style>
+                        ${document.querySelector('style').innerHTML}
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt-popup">
+                        <div class="receipt-header">
+                            <img src="ESPASIO.png" alt="Espasio Logo" class="receipt-logo">
+                            <div class="receipt-title">Product Purchase</div>
+                        </div>
+            `;
+            
+            // Add space booking info if active session exists
+            if (activeSession) {
+                const durationMs = activeSession.timeOut - activeSession.timeIn;
+                const hours = Math.floor(durationMs / (1000 * 60 * 60));
+                const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+                
+                receiptContent += `
+                    <div class="receipt-details">
+                        <div class="receipt-row">
+                            <span class="receipt-label">Space:</span>
+                            <span>${activeSession.spaceName}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Duration:</span>
+                            <span>${hours}h ${minutes}m</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Customer:</span>
+                            <span>${activeSession.userName || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <div class="receipt-divider"></div>
+                `;
+            }
+            
+            // Add product items
+            receiptContent += `
                 <div class="receipt-details">
                     <div class="receipt-row">
-                        <span class="receipt-label">Customer:</span>
-                        <span>${userName}</span>
+                        <span class="receipt-label">Date:</span>
+                        <span>${new Date().toLocaleString()}</span>
                     </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Space:</span>
-                        <span>${spaceName}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Pax:</span>
-                        <span>${pax}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Time In:</span>
-                        <span>${formatDateTime(timeIn)}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Time Out:</span>
-                        <span>${formatDateTime(timeOut)}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Duration:</span>
-                        <span>${hours}h ${minutes}m</span>
-                    </div>
-
                     <div class="receipt-divider"></div>
-
+                    <div style="font-weight:bold; margin:10px 0;">Products:</div>
+            `;
+            
+            let total = 0;
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                receiptContent += `
                     <div class="receipt-row">
-                        <span class="receipt-label">Total Amount:</span>
-                        <span>₱${totalAmount.toFixed(2)}</span>
+                        <span>${item.name} x${item.quantity}</span>
+                        <span>₱${itemTotal.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            
+            receiptContent += `
+                    <div class="receipt-divider"></div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Total:</span>
+                        <span>₱${total.toFixed(2)}</span>
                     </div>
                 </div>
-
-                <div class="payment-inputs no-print">
+            `;
+            
+            // Add payment inputs
+            receiptContent += `
+                <div class="payment-inputs">
                     <div class="payment-input-group">
                         <label for="popupAmount">Amount Received:</label>
-                        <input type="number" id="popupAmount" min="${totalAmount}" step="0.01"
+                        <input type="number" id="popupAmount" min="${total}" step="0.01"
                             placeholder="Enter amount" oninput="calculateChange()">
                     </div>
                     <div class="payment-input-group">
                         <label for="popupChange">Change:</label>
                         <input type="text" id="popupChange" readonly>
                     </div>
-                    <div class="payment-input-group">
-                        <label for="popupWifiPassword">WiFi Password:</label>
-                        <input type="text" id="popupWifiPassword"
-                            value="${storedWifiPassword}" placeholder="Enter WiFi password" oninput="window.opener.updateWifiPassword(this.value)">
-                    </div>
                 </div>
-
-                <div class="receipt-details">
-                    <div class="receipt-divider"></div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">WiFi Network:</span>
-                        <span>ESPASIO</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Password:</span>
-                        <span id="receiptPassword">${storedWifiPassword || '______'}</span>
-                    </div>
-                </div>
-
+                
                 <div class="receipt-footer no-print">
                     <button onclick="confirmPayment()" style="
                         background: #003300;
@@ -740,1074 +1979,279 @@ function showPaymentPopup() {
                         cursor: pointer;
                         font-size: 14px;
                         margin-top: 10px;
-                    ">Confirm & Print</button>
+                    ">Confirm Payment</button>
                 </div>
-
-                <div class="receipt-footer">
-                    Have a productive stay!
-                </div>
-            </div>
-
-            <script>
-                function calculateChange() {
-                    const amount = parseFloat(document.getElementById('popupAmount').value) || 0;
-                    const total = ${totalAmount};
-                    const change = amount - total;
-                    document.getElementById('popupChange').value = change >= 0 ? '₱' + change.toFixed(2) : '';
-
-                    // Update WiFi password display
-                    const wifiPass = document.getElementById('popupWifiPassword').value;
-                    document.getElementById('receiptPassword').textContent = wifiPass || '______';
-                }
-
-                function confirmPayment() {
-                    const amount = parseFloat(document.getElementById('popupAmount').value) || 0;
-                    const total = ${totalAmount};
-
-                    if (amount < total) {
-                        alert('Amount received cannot be less than total amount');
-                        return;
-                    }
-
-                    // Store WiFi password
-                    const wifiPassword = document.getElementById('popupWifiPassword').value;
-                    if (wifiPassword) {
-                        window.opener.storedWifiPassword = wifiPassword;
-                        window.opener.updateWifiPassword(wifiPassword);
-                    }
-
-                    // Create the session in the main window
-                    window.opener.createSessionAfterPayment(
-                        '${spaceName}',
-                        '${userName}',
-                        ${pax},
-                        '${timeIn.toISOString()}',
-                        '${timeOut.toISOString()}'
-                    );
-
-                    // Print the receipt
-                    setTimeout(() => {
-                        window.print();
-                        window.close();
-                    }, 500);
-                }
-
-                // Initialize change calculation
-                document.getElementById('popupAmount').addEventListener('input', calculateChange);
-                document.getElementById('popupWifiPassword').addEventListener('input', function() {
-                    document.getElementById('receiptPassword').textContent = this.value || '______';
-                });
-            <\/script>
-        </body>
-        </html>
-    `);
-}
-
-function updateWifiPassword(value) {
-    storedWifiPassword = value;
-    localStorage.setItem('wifiPassword', value);
-}
-
-// Create session after payment (called from popup)
-function createSessionAfterPayment(spaceName, userName, pax, timeIn, timeOut) {
-    const session = {
-        id: Date.now(),
-        spaceName,
-        userName,
-        pax,
-        timeIn: new Date(timeIn),
-        timeOut: new Date(timeOut),
-        warningTriggered: false,
-        showTimeoutButton: false,
-        overtimeFee: 0,
-        originalTimeOut: new Date(timeOut), // Store original time out
-        extensions: [] // Track all extensions made
-    };
-
-    activeSessions.push(session);
-    displayActiveSessions();
-    switchTab('active');
-
-    // Reset form
-    document.getElementById('space-name').selectedIndex = 0;
-    document.getElementById('user-name').value = '';
-    document.getElementById('pax').value = '1';
-    document.getElementById('hours').value = '0';
-    document.getElementById('minutes').value = '0';
-
-    saveSessions();
-}
-
-// Modified printReceipt function to handle extensions and overtime
-function printReceipt(id) {
-    const session = activeSessions.find(s => s.id === id);
-    if (!session) return;
-
-    // Calculate original duration and amount
-    const originalDurationMs = session.originalTimeOut - session.timeIn;
-    const originalMinutes = Math.floor(originalDurationMs / 60000);
-    const originalHours = Math.floor(originalMinutes / 60);
-    const originalRemainingMins = originalMinutes % 60;
-
-    // Calculate extended duration (if any)
-    const extendedDurationMs = session.timeOut - session.originalTimeOut;
-    const extendedMinutes = Math.floor(extendedDurationMs / 60000);
-    const extendedHours = Math.floor(extendedMinutes / 60);
-    const extendedRemainingMins = extendedMinutes % 60;
-
-    // Calculate overtime (if any)
-    const now = new Date();
-    const overtimeMs = Math.max(0, now - session.timeOut);
-    const overtimeMinutes = Math.floor(overtimeMs / 60000);
-    const overtimeHours = Math.floor(overtimeMinutes / 60);
-    const overtimeRemainingMins = overtimeMinutes % 60;
-
-    // Pricing structure
-    const isDeskZone = session.spaceName.includes("Desk");
-    const pricePer30Min = isDeskZone ? 25 : 30;
-    const pricePerHour = isDeskZone ? 39 : 49;
-
-    // Calculate original amount
-    let originalAmount = 0;
-    if (originalMinutes <= 30) {
-        originalAmount = pricePer30Min * session.pax;
-    } else {
-        const fullHours = Math.floor(originalMinutes / 60);
-        const remainingMins = originalMinutes % 60;
-        originalAmount = (fullHours * pricePerHour * session.pax) +
-            (Math.ceil(remainingMins / 30) * pricePer30Min * session.pax);
-    }
-
-    // Calculate extension amount (if any)
-    let extensionAmount = 0;
-    if (extendedMinutes > 0) {
-        if (extendedMinutes <= 30) {
-            extensionAmount = pricePer30Min * session.pax;
-        } else {
-            const fullHours = Math.floor(extendedMinutes / 60);
-            const remainingMins = extendedMinutes % 60;
-            extensionAmount = (fullHours * pricePerHour * session.pax) +
-                (Math.ceil(remainingMins / 30) * pricePer30Min * session.pax);
-        }
-    }
-
-    // Calculate overtime amount
-    let overtimeAmount = 0;
-    if (overtimeMinutes > 0) {
-        let remainingOvertimeMins = overtimeMinutes;
-        while (remainingOvertimeMins > 0) {
-            if (remainingOvertimeMins <= 30) {
-                overtimeAmount += isDeskZone ? 25 : 30;
-                remainingOvertimeMins = 0;
-            } else {
-                overtimeAmount += isDeskZone ? 39 : 49;
-                remainingOvertimeMins -= 60;
-            }
-        }
-        overtimeAmount *= session.pax;
-    }
-
-    // Total amount
-    const totalAmount = originalAmount + extensionAmount + overtimeAmount;
-
-    // Create popup window
-    const popup = window.open('', 'Receipt', 'width=350,height=600');
-    popup.document.write(`
-        <html>
-        <head>
-            <title>ESPASIO Receipt</title>
-            <style>
-                ${document.querySelector('style').innerHTML}
-            </style>
-        </head>
-        <body>
-            <div class="receipt-popup">
-                <div class="receipt-header">
-                    <img src="ESPASIO.png" alt="Espasio Logo" class="receipt-logo">
-                    <div class="receipt-title">Study Hub | Co-Working Space</div>
-                </div>
-
-                <div class="receipt-details">
-                    <div class="receipt-row">
-                        <span class="receipt-label">Customer:</span>
-                        <span>${session.userName}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Space:</span>
-                        <span>${session.spaceName}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Pax:</span>
-                        <span>${session.pax}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Time In:</span>
-                        <span>${formatDateTime(session.timeIn)}</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Time Out:</span>
-                        <span>${formatDateTime(session.timeOut)}</span>
-                    </div>
-                </div>
-
-                ${extendedMinutes > 0 ? `
-                <div class="extension-details">
-                    <div class="extension-row">
-                        <span>Original Duration:</span>
-                        <span>${originalHours}h ${originalRemainingMins}m</span>
-                    </div>
-                    <div class="extension-row">
-                        <span>Extension:</span>
-                        <span>${extendedHours}h ${extendedRemainingMins}m</span>
-                    </div>
-                    <div class="extension-row">
-                        <span>Extension Fee:</span>
-                        <span>₱${extensionAmount.toFixed(2)}</span>
-                    </div>
-                </div>
-                ` : ''}
-
-                ${overtimeMinutes > 0 ? `
-                <div class="extension-details">
-                    <div class="extension-row">
-                        <span>Overtime:</span>
-                        <span>${overtimeHours}h ${overtimeRemainingMins}m</span>
-                    </div>
-                    <div class="extension-row">
-                        <span>Overtime Fee:</span>
-                        <span>₱${overtimeAmount.toFixed(2)}</span>
-                    </div>
-                </div>
-                ` : ''}
-
-                <div class="receipt-divider"></div>
-
-                <div class="receipt-row">
-                    <span class="receipt-label">Original Amount:</span>
-                    <span>₱${originalAmount.toFixed(2)}</span>
-                </div>
-                ${extendedMinutes > 0 ? `
-                <div class="receipt-row">
-                    <span class="receipt-label">Extension Fee:</span>
-                    <span>₱${extensionAmount.toFixed(2)}</span>
-                </div>
-                ` : ''}
-                ${overtimeMinutes > 0 ? `
-                <div class="receipt-row">
-                    <span class="receipt-label">Overtime Fee:</span>
-                    <span>₱${overtimeAmount.toFixed(2)}</span>
-                </div>
-                ` : ''}
-                <div class="receipt-row">
-                    <span class="receipt-label">Total Amount:</span>
-                    <span>₱${totalAmount.toFixed(2)}</span>
-                </div>
-
-                <div class="receipt-details">
-                    <div class="receipt-divider"></div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">WiFi Network:</span>
-                        <span>ESPASIO</span>
-                    </div>
-                    <div class="receipt-row">
-                        <span class="receipt-label">Password:</span>
-                        <span id="receiptPassword">${storedWifiPassword || '______'}</span>
-                    </div>
-                </div>
-
-                <div class="receipt-footer no-print">
-                    <button onclick="window.print()" style="
-                        background: #003300;
-                        color: white;
-                        border: none;
-                        padding: 10px 20px;
-                        border-radius: 3px;
-                        cursor: pointer;
-                        font-size: 14px;
-                        margin-top: 10px;
-                    ">Print Receipt</button>
-                </div>
-
-                <div class="receipt-footer">
-                    Have a productive stay!
-                </div>
-            </div>
-
-            <script>
-                window.onload = function() {
-                    setTimeout(() => {
-                        window.print();
-                    }, 500);
-                };
-            <\/script>
-        </body>
-        </html>
-    `);
-}
-
-// Calculate overtime fee multiplied by PAX
-function calculateOvertimeFee(session) {
-    const overtimeMins = Math.floor((new Date() - session.timeOut) / 60000);
-    if (overtimeMins <= 0) return 0;
-    const isDeskZone = session.spaceName.includes("Desk");
-    let fee = 0;
-    let remainingMins = overtimeMins;
-    while (remainingMins > 0) {
-        if (remainingMins <= 30) {
-            fee += isDeskZone ? 25 : 30;
-            remainingMins = 0;
-        } else {
-            fee += isDeskZone ? 39 : 49;
-            remainingMins -= 60;
-        }
-    }
-    return fee * session.pax;
-}
-
-// Edit user name
-function editUserName(id) {
-    // If already editing, save first
-    if (isEditing && editingSessionId !== id) {
-        saveUserName(editingSessionId);
-    }
-    isEditing = true;
-    editingSessionId = id;
-    const container = document.getElementById('active-sessions-container');
-    const sessionIndex = activeSessions.findIndex(s => s.id === id);
-    if (sessionIndex !== -1) {
-        const session = activeSessions[sessionIndex];
-        const now = new Date();
-        const remainingTime = session.timeOut - now;
-        const overtimeMs = Math.max(0, now - session.timeOut);
-        const overtimeMins = Math.floor(overtimeMs / 60000);
-        const overtimeHours = Math.floor(overtimeMins / 60);
-        const remainingOvertimeMins = overtimeMins % 60;
-        const overtimeText = overtimeMs > 0 ?
-            `Overtime: ${overtimeHours}h ${remainingOvertimeMins}m` : '';
-        let remainingText = formatTime(remainingTime);
-        let timeClass = '';
-        if (remainingTime <= 0) {
-            remainingText = 'TIME OUT';
-            timeClass = 'expired';
-        } else if (remainingTime <= 3 * 60 * 1000) {
-            timeClass = 'warning';
-        }
-        const cardHTML = `
-            <div class="session-card">
-                <div class="session-header">
-                    <div>
-                        <span class="session-name">
-                            <img src="${getSpaceIcon(session.spaceName)}" class="space-icon" alt="${session.spaceName}">
-                            ${session.spaceName} (${session.pax})
-                        </span>
-                        <input type="text" class="user-name-input" data-id="${session.id}"
-                            value="${session.userName || ''}"
-                            placeholder="Name"
-                            onkeypress="handleNameInput(event, ${session.id})">
-                    </div>
-                    <button class="secondary" onclick="endSession(${session.id})">End</button>
-                </div>
-                <div class="time-info">
-                    <div class="time-row">
-                        <span class="time-label">In:</span>
-                        <span>${formatDateTime(session.timeIn)}</span>
-                    </div>
-                    <div class="time-row">
-                        <span class="time-label">Out:</span>
-                        <span>${formatDateTime(session.timeOut)}</span>
-                    </div>
-                </div>
-                <div class="remaining-time ${timeClass}">
-                    ${remainingText}
-                    ${overtimeText ? `<div class="overtime-duration">${overtimeText}</div>` : ''}
-                </div>
-                <button class="alarm-btn" style="background: #003300;" onclick="printReceipt(${session.id})">
-                    Print Receipt
-                </button>
-                ${remainingTime <= 0 ? `
-                    <div class="overtime-fee">
-                        Overtime Fee: ₱${calculateOvertimeFee(session).toFixed(2)} (${session.pax} pax)
-                    </div>
-                    <button class="alarm-btn" onclick="playTimeoutAlarm(${session.id})">
-                        Play Timeout Alarm
-                    </button>
-                ` : ''}
-                <div class="time-adjustments">
-                    <div class="minute-adjustments">
-                        <button onclick="adjustSessionTime(${session.id}, 1)">+1m</button>
-                        <button onclick="adjustSessionTime(${session.id}, 5)">+5m</button>
-                        <button onclick="adjustSessionTime(${session.id}, -1)">-1m</button>
-                        <button onclick="adjustSessionTime(${session.id}, -5)">-5m</button>
-                    </div>
-                    <div class="hour-adjustments">
-                        <button onclick="adjustSessionTime(${session.id}, 30)">+30m</button>
-                        <button onclick="adjustSessionTime(${session.id}, 60)">+1h</button>
-                        <button onclick="adjustSessionTime(${session.id}, -30)">-30m</button>
-                        <button onclick="adjustSessionTime(${session.id}, -60)">-1h</button>
-                    </div>
-                </div>
-                <div class="time-stamp">${formatFullDateTime(session.timeIn)}</div>
-            </div>
-        `;
-        const cards = container.querySelectorAll('.session-card');
-        if (cards[sessionIndex]) {
-            cards[sessionIndex].outerHTML = cardHTML;
-        }
-        setTimeout(() => {
-            editingInputElement = document.querySelector(`.user-name-input[data-id="${id}"]`);
-            if (editingInputElement) {
-                editingInputElement.focus();
-                editingInputElement.addEventListener('blur', handleBlur);
-                document.addEventListener('click', handleClickOutside);
-            }
-        }, 10);
-    }
-}
-
-function handleBlur() {
-    saveUserName(editingSessionId);
-}
-
-function handleClickOutside(e) {
-    if (editingInputElement && !editingInputElement.contains(e.target)) {
-        saveUserName(editingSessionId);
-    }
-}
-
-// Save user name
-function saveUserName(id) {
-    if (!isEditing) return;
-    const input = document.querySelector(`.user-name-input[data-id="${id}"]`);
-    if (input) {
-        const session = activeSessions.find(s => s.id === id);
-        if (session) {
-            session.userName = input.value.trim();
-            editingSessionId = null;
-            editingInputElement = null;
-            isEditing = false;
-            if (input) {
-                input.removeEventListener('blur', handleBlur);
-            }
-            document.removeEventListener('click', handleClickOutside);
-            displayActiveSessions();
-            saveSessions();
-        }
-    }
-}
-
-function handleNameInput(event, id) {
-    if (event.key === 'Enter') {
-        saveUserName(id);
-    }
-}
-
-function playTimeoutAlarm(id) {
-    const session = activeSessions.find(s => s.id === id);
-    if (session) {
-        playTimeoutSound();
-    }
-}
-
-function adjustSessionTime(id, minutes) {
-    const session = activeSessions.find(s => s.id === id);
-    if (session) {
-        const oldTimeOut = new Date(session.timeOut);
-        session.timeOut = new Date(session.timeOut.getTime() + minutes * 60000);
-        
-        // Track the extension
-        if (minutes > 0) {
-            session.extensions.push({
-                minutesAdded: minutes,
-                oldTimeOut: oldTimeOut,
-                newTimeOut: new Date(session.timeOut)
-            });
-        }
-        
-        session.warningTriggered = false;
-        session.showTimeoutButton = false;
-        displayActiveSessions();
-        saveSessions();
-    }
-}
-
-function displayActiveSessions() {
-    if (isEditing) return;
-    const container = document.getElementById('active-sessions-container');
-    container.innerHTML = '';
-    if (activeSessions.length === 0) {
-        container.innerHTML = '<div class="empty-state">No active sessions</div>';
-        return;
-    }
-    const now = new Date();
-    const sortedSessions = [...activeSessions].sort((a, b) => {
-        return (a.timeOut - now) - (b.timeOut - now);
-    });
-    sortedSessions.forEach(session => {
-        const remainingTime = session.timeOut - now;
-        session.overtimeFee = calculateOvertimeFee(session);
-        // Calculate overtime duration
-        const overtimeMs = Math.max(0, now - session.timeOut);
-        const overtimeMins = Math.floor(overtimeMs / 60000);
-        const overtimeHours = Math.floor(overtimeMins / 60);
-        const remainingOvertimeMins = overtimeMins % 60;
-        const overtimeText = overtimeMs > 0 ?
-            `Overtime: ${overtimeHours}h ${remainingOvertimeMins}m` : '';
-        const card = document.createElement('div');
-        card.className = 'session-card';
-        let remainingText = formatTime(remainingTime);
-        let timeClass = '';
-        if (remainingTime <= 0) {
-            remainingText = 'TIME OUT';
-            timeClass = 'expired';
-            session.showTimeoutButton = true;
-        } else if (remainingTime <= 3 * 60 * 1000) {
-            timeClass = 'warning';
-        }
-        let userNameDisplay;
-        const displayName = session.userName || '[click to add name]';
-        userNameDisplay = `<span class="user-name" onclick="editUserName(${session.id})">${displayName}</span>`;
-        let timeoutButton = '';
-        if (session.showTimeoutButton) {
-            timeoutButton = `
-                <button class="alarm-btn" onclick="playTimeoutAlarm(${session.id})">
-                    Play Timeout Alarm
-                </button>
-            `;
-        }
-        let overtimeDisplay = '';
-        if (remainingTime <= 0) {
-            overtimeDisplay = `
-                <div class="overtime-fee">
-                    Overtime Fee: ₱${session.overtimeFee.toFixed(2)} (${session.pax} pax)
-                </div>
-            `;
-        }
-        card.innerHTML = `
-            <div class="session-header">
-                <div>
-                    <span class="session-name">
-                        <img src="${getSpaceIcon(session.spaceName)}" class="space-icon" alt="${session.spaceName}">
-                        ${session.spaceName} (${session.pax})
-                    </span>
-                    ${userNameDisplay}
-                </div>
-                <button class="secondary" onclick="endSession(${session.id})">End</button>
-            </div>
-            <div class="time-info">
-                <div class="time-row">
-                    <span class="time-label">In:</span>
-                    <span>${formatDateTime(session.timeIn)}</span>
-                </div>
-                <div class="time-row">
-                    <span class="time-label">Out:</span>
-                    <span>${formatDateTime(session.timeOut)}</span>
-                </div>
-            </div>
-            <div class="remaining-time ${timeClass}">
-                ${remainingText}
-                ${overtimeText ? `<div class="overtime-duration">${overtimeText}</div>` : ''}
-            </div>
-            <button class="alarm-btn" style="background: #a0bcc2;" color: #white;" onclick="printReceipt(${session.id})">
-                Print Receipt
-            </button>
-            ${overtimeDisplay}
-            ${timeoutButton}
-            <div class="time-adjustments">
-                <div class="minute-adjustments">
-                    <button onclick="adjustSessionTime(${session.id}, 1)">+1m</button>
-                    <button onclick="adjustSessionTime(${session.id}, 5)">+5m</button>
-                    <button onclick="adjustSessionTime(${session.id}, -1)">-1m</button>
-                    <button onclick="adjustSessionTime(${session.id}, -5)">-5m</button>
-                </div>
-                <div class="hour-adjustments">
-                    <button onclick="adjustSessionTime(${session.id}, 30)">+30m</button>
-                    <button onclick="adjustSessionTime(${session.id}, 60)">+1h</button>
-                    <button onclick="adjustSessionTime(${session.id}, -30)">-30m</button>
-                    <button onclick="adjustSessionTime(${session.id}, -60)">-1h</button>
-                </div>
-            </div>
-            <div class="time-stamp">${formatFullDateTime(session.timeIn)}</div>
-        `;
-        container.appendChild(card);
-    });
-}
-
-function displayInactiveSessions() {
-    const container = document.getElementById('inactive-sessions-container');
-    container.innerHTML = '';
-    if (inactiveSessions.length === 0) {
-        container.innerHTML = '<div class="empty-state">No session history</div>';
-        return;
-    }
-    inactiveSessions.forEach(session => {
-        const card = document.createElement('div');
-        card.className = 'session-card';
-        let feeDisplay = '';
-        if (session.overtimeFee > 0) {
-            feeDisplay = `<div class="overtime-fee">Overtime Paid: ₱${session.overtimeFee.toFixed(2)} (${session.pax} pax)</div>`;
-        }
-        card.innerHTML = `
-            <div class="session-header">
-                <div class="session-name">
-                    <img src="${getSpaceIcon(session.spaceName)}" class="space-icon" alt="${session.spaceName}">
-                    ${session.spaceName} (${session.pax})${session.userName ? ' - ' + session.userName : ''}
-                </div>
-                <button class="secondary" onclick="deleteInactiveSession(${session.id})">Delete</button>
-            </div>
-            <div class="time-info">
-                <div class="time-row">
-                    <span class="time-label">In:</span>
-                    <span>${formatDateTime(session.timeIn)}</span>
-                </div>
-                <div class="time-row">
-                    <span class="time-label">Out:</span>
-                    <span>${formatDateTime(session.timeOut)}</span>
-                </div>
-            </div>
-            ${feeDisplay}
-            <div class="time-stamp">${formatFullDateTime(session.timeIn)}</div>
-        `;
-        container.appendChild(card);
-    });
-    updateDailySummary();
-}
-
-function endSession(id) {
-    const index = activeSessions.findIndex(session => session.id === id);
-    if (index !== -1) {
-        const session = activeSessions[index];
-        session.completedTime = new Date();
-        session.overtimeFee = calculateOvertimeFee(session);
-        inactiveSessions.unshift(session);
-        activeSessions.splice(index, 1);
-        stopAlarms();
-        displayActiveSessions();
-        displayInactiveSessions();
-        saveSessions();
-    }
-}
-
-function deleteInactiveSession(id) {
-    const index = inactiveSessions.findIndex(session => session.id === id);
-    if (index !== -1) {
-        inactiveSessions.splice(index, 1);
-        displayInactiveSessions();
-        saveSessions();
-    }
-}
-
-function checkAlarms() {
-    if (isEditing) return;
-    const now = new Date();
-    activeSessions.forEach(session => {
-        const remainingTime = session.timeOut - now;
-        if (remainingTime <= 3 * 60 * 1000 && remainingTime > 0 && !session.warningTriggered) {
-            session.warningTriggered = true;
-            playWarningSound();
-        }
-        if (remainingTime <= 0) {
-            session.showTimeoutButton = true;
-        }
-    });
-    displayActiveSessions();
-}
-
-function playWarningSound() {
-    const alarm = document.getElementById('warning-alarm');
-    alarm.currentTime = 0;
-    alarm.play().catch(e => console.log('Audio play failed:', e));
-}
-
-function playTimeoutSound() {
-    const alarm = document.getElementById('timeout-alarm');
-    alarm.currentTime = 0;
-    alarm.play().catch(e => console.log('Audio play failed:', e));
-}
-
-function stopAlarms() {
-    document.getElementById('warning-alarm').pause();
-    document.getElementById('timeout-alarm').pause();
-}
-
-function testWarningSound() {
-    playWarningSound();
-}
-
-function testTimeoutSound() {
-    playTimeoutSound();
-}
-
-function formatTime(milliseconds) {
-    if (isNaN(milliseconds)) {
-        const date = new Date(milliseconds);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-    if (milliseconds <= 0) return '00:00:00';
-    const seconds = Math.floor((milliseconds /1000) % 60);
-    const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
-    const hours = Math.floor((milliseconds / (1000 * 60 * 60)));
-    
-    return [
-        hours.toString().padStart(2, '0'),
-        minutes.toString().padStart(2, '0'),
-        seconds.toString().padStart(2, '0')
-    ].join(':');
-}
-
-function formatDateTime(date) {
-    return date.toLocaleString([], { 
-        month: '2-digit', 
-        day: '2-digit', 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true
-    });
-}
-
-function formatFullDateTime(date) {
-    return date.toLocaleString([], { 
-        year: 'numeric',
-        month: '2-digit', 
-        day: '2-digit', 
-        hour: '2-digit', 
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-    });
-}
-
-function saveSessions() {
-    localStorage.setItem('activeSessions', JSON.stringify(activeSessions));
-    localStorage.setItem('inactiveSessions', JSON.stringify(inactiveSessions));
-}
-
-function loadSessions() {
-    const savedActive = localStorage.getItem('activeSessions');
-    const savedInactive = localStorage.getItem('inactiveSessions');
-    
-    if (savedActive) {
-        activeSessions = JSON.parse(savedActive).map(session => ({
-            ...session,
-            timeIn: new Date(session.timeIn),
-            timeOut: new Date(session.timeOut),
-            originalTimeOut: session.originalTimeOut ? new Date(session.originalTimeOut) : new Date(session.timeOut),
-            extensions: session.extensions || []
-        }));
-    }
-    
-    if (savedInactive) {
-        inactiveSessions = JSON.parse(savedInactive).map(session => ({
-            ...session,
-            timeIn: new Date(session.timeIn),
-            timeOut: new Date(session.timeOut),
-            completedTime: session.completedTime ? new Date(session.completedTime) : new Date(session.timeOut)
-        }));
-    }
-}
-
-// ========== NEW REPORT FUNCTIONS ==========
-function generateReport() {
-    const period = document.getElementById('report-period').value;
-    const spaceFilter = document.getElementById('report-space').value;
-    
-    // Get filtered sessions
-    const filteredSessions = filterSessions(period, spaceFilter);
-    
-    // Calculate totals
-    const totals = calculateReportTotals(filteredSessions);
-    
-    // Display report
-    displayReport(period, totals, filteredSessions);
-}
-
-function filterSessions(period, spaceFilter) {
-    const now = new Date();
-    return inactiveSessions.filter(session => {
-        // Filter by space
-        const matchesSpace = spaceFilter === 'all' || 
-                            session.spaceName.includes(spaceFilter);
-        
-        // Filter by period
-        const sessionDate = new Date(session.completedTime || session.timeOut);
-        const matchesPeriod = checkDateInPeriod(sessionDate, now, period);
-        
-        return matchesSpace && matchesPeriod;
-    });
-}
-
-function checkDateInPeriod(date, now, period) {
-    switch(period) {
-        case 'today':
-            return date.toDateString() === now.toDateString();
-        case 'week':
-            const weekStart = new Date(now);
-            weekStart.setDate(now.getDate() - now.getDay());
-            weekStart.setHours(0, 0, 0, 0);
-            return date >= weekStart;
-        case 'month':
-            return date.getMonth() === now.getMonth() && 
-                   date.getFullYear() === now.getFullYear();
-        case 'year':
-            return date.getFullYear() === now.getFullYear();
-        default:
-            return true;
-    }
-}
-
-function calculateReportTotals(sessions) {
-    const totals = {
-        earnings: 0,
-        pax: 0,
-        spaces: {
-            'Desk Zone': { earnings: 0, pax: 0 },
-            'Flex Space': { earnings: 0, pax: 0 },
-            'Hangout': { earnings: 0, pax: 0 }
-        }
-    };
-    
-    sessions.forEach(session => {
-        // Calculate session earnings (original + overtime)
-        const durationMs = session.timeOut - session.timeIn;
-        const totalMinutes = Math.floor(durationMs / 60000);
-        
-        const isDeskZone = session.spaceName.includes("Desk");
-        const pricePer30Min = isDeskZone ? 25 : 30;
-        const pricePerHour = isDeskZone ? 39 : 49;
-        
-        let sessionEarnings = 0;
-        if (totalMinutes <= 30) {
-            sessionEarnings = pricePer30Min * session.pax;
-        } else {
-            const fullHours = Math.floor(totalMinutes / 60);
-            const remainingMins = totalMinutes % 60;
-            sessionEarnings = (fullHours * pricePerHour * session.pax) +
-                (Math.ceil(remainingMins / 30) * pricePer30Min * session.pax);
-        }
-        
-        // Add overtime fee
-        sessionEarnings += session.overtimeFee || 0;
-        
-        // Update totals
-        totals.earnings += sessionEarnings;
-        totals.pax += session.pax;
-        
-        // Update space-specific totals
-        const spaceType = session.spaceName.includes("Desk") ? "Desk Zone" :
-                         session.spaceName.includes("Flex") ? "Flex Space" : "Hangout";
-        
-        if (totals.spaces[spaceType]) {
-            totals.spaces[spaceType].earnings += sessionEarnings;
-            totals.spaces[spaceType].pax += session.pax;
-        }
-    });
-    
-    return totals;
-}
-
-function displayReport(period, totals, sessions) {
-    const periodTitles = {
-        'today': "Today's Report",
-        'week': "This Week's Report",
-        'month': "This Month's Report",
-        'year': "This Year's Report"
-    };
-    
-    let html = `
-        <div class="report-summary">
-            <div class="report-period-title">${periodTitles[period]}</div>
-            
-            <div class="report-totals">
-                <div class="report-total-item">
-                    <div>Total Earnings</div>
-                    <div class="report-total-value">₱${totals.earnings.toFixed(2)}</div>
-                </div>
-                <div class="report-total-item">
-                    <div>Total PAX</div>
-                    <div class="report-total-value">${totals.pax}</div>
-                </div>
-            </div>
-            
-            <div class="report-space-breakdown">
-                <div style="font-weight:bold; margin-bottom:8px;">Space Breakdown:</div>
-    `;
-    
-    // Add space breakdown
-    for (const [space, stats] of Object.entries(totals.spaces)) {
-        if (stats.pax > 0) {
-            html += `
-                <div class="report-space-item">
-                    <span>${space}:</span>
-                    <span>₱${stats.earnings.toFixed(2)} (${stats.pax}pax)</span>
-                </div>
-            `;
-        }
-    }
-    
-    html += `
-            </div>
-        </div>
-        
-        <div class="report-details">
-            <div style="font-weight:bold; margin-bottom:8px;">Session Details:</div>
-    `;
-    
-    // Add session details
-    if (sessions.length === 0) {
-        html += `<div style="color:#7f8c8d; text-align:center;">No sessions found</div>`;
-    } else {
-        sessions.forEach(session => {
-            const time = formatDateTime(new Date(session.completedTime || session.timeOut));
-            const duration = formatDuration(session.timeOut - session.timeIn);
-            
-            html += `
-                <div class="report-session-item">
-                    <div>
-                        <strong>${session.spaceName}</strong> - ${session.userName || 'No name'} (${session.pax}pax)
-                        <div class="report-session-time">${time} • ${duration}</div>
-                    </div>
-                    <div style="margin-top:4px;">
-                        ₱${(session.overtimeFee ? (calculateSessionOriginalAmount(session) + session.overtimeFee).toFixed(2) : calculateSessionOriginalAmount(session).toFixed(2))}
-                        ${session.overtimeFee ? ` <span style="color:#e74c3c;">(+₱${session.overtimeFee.toFixed(2)} overtime)</span>` : ''}
-                    </div>
-                </div>
-            `;
-        });
-    }
-    
-    html += `</div>`;
-    
-    document.getElementById('report-results').innerHTML = html;
-}
-
-function calculateSessionOriginalAmount(session) {
-    const durationMs = session.timeOut - session.timeIn;
-    const totalMinutes = Math.floor(durationMs / 60000);
-    const isDeskZone = session.spaceName.includes("Desk");
-    const pricePer30Min = isDeskZone ? 25 : 30;
-    const pricePerHour = isDeskZone ? 39 : 49;
-
-    if (totalMinutes <= 30) {
-        return pricePer30Min * session.pax;
-    } else {
-        const fullHours = Math.floor(totalMinutes / 60);
-        const remainingMins = totalMinutes % 60;
-        return (fullHours * pricePerHour * session.pax) +
-            (Math.ceil(remainingMins / 30) * pricePer30Min * session.pax);
-    }
-}
-
-function formatDuration(ms) {
-    const minutes = Math.floor(ms / 60000);
-    const hours = Math.floor(minutes / 60);
-    const remainingMins = minutes % 60;
-    return `${hours}h ${remainingMins}m`;
-}
-
-function printReport() {
-    const printContent = document.getElementById('report-results').innerHTML;
-    const printWindow = window.open('', '_blank');
-    
-    printWindow.document.write(`
-        <html>
-            <head>
-                <title>ESPASIO Report</title>
-                <style>
-                    body { font-family: Arial; padding: 20px; }
-                    .report-period-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 15px; }
-                    .report-totals { display: flex; justify-content: space-around; margin-bottom: 20px; }
-                    .report-total-item { text-align: center; }
-                    .report-total-value { font-size: 18px; font-weight: bold; }
-                    .report-space-item { display: flex; justify-content: space-between; padding: 5px 0; }
-                    .report-session-item { padding: 8px 0; border-bottom: 1px solid #eee; }
-                    .report-session-time { color: #666; font-size: 12px; }
-                </style>
-            </head>
-            <body>
-                ${printContent}
+                
                 <script>
-                    setTimeout(() => { window.print(); }, 200);
+                    function calculateChange() {
+                        const amount = parseFloat(document.getElementById('popupAmount').value) || 0;
+                        const total = ${total};
+                        const change = amount - total;
+                        document.getElementById('popupChange').value = change >= 0 ? '₱' + change.toFixed(2) : '';
+                    }
+                    
+                    function confirmPayment() {
+                        const amount = parseFloat(document.getElementById('popupAmount').value) || 0;
+                        const total = ${total};
+                        
+                        if (amount < total) {
+                            alert('Amount received cannot be less than total amount');
+                            return;
+                        }
+                        
+                        // Send confirmation back to main window
+                        window.opener.finalizeCheckout(${activeSession ? activeSession.id : 'null'});
+                        
+                        // Close the window after printing
+                        setTimeout(() => {
+                            window.print();
+                            window.close();
+                        }, 500);
+                    }
+                    
+                    // Initialize change calculation
+                    document.getElementById('popupAmount').addEventListener('input', calculateChange);
                 <\/script>
             </body>
-        </html>
-    `);
-}
+            </html>
+            `;
+            
+            popup.document.write(receiptContent);
+        }
 
-function updateDailySummary() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // Filter sessions that were completed today
-    const todaySessions = inactiveSessions.filter(session => {
-        const sessionDate = new Date(session.completedTime || session.timeOut);
-        sessionDate.setHours(0, 0, 0, 0);
-        return sessionDate.getTime() === today.getTime();
-    });
-    
-    // Calculate totals
-    let totalEarnings = 0;
-    let totalPax = 0;
-    const spaceStats = {
-        "Desk Zone": { pax: 0, earnings: 0 },
-        "Flex Space": { pax: 0, earnings: 0 },
-        "Hangout for Two": { pax: 0, earnings: 0 },
-        "Hangout for Three": { pax: 0, earnings: 0 }
-    };
-    
-    todaySessions.forEach(session => {
-        // Calculate session earnings (original + overtime)
-        const sessionEarnings = calculateSessionOriginalAmount(session) + (session.overtimeFee || 0);
-        
-        // Update totals
-        totalEarnings += sessionEarnings;
-        totalPax += session.pax;
-        
-        // Update space-specific totals
-        if (session.spaceName in spaceStats) {
-            spaceStats[session.spaceName].pax += session.pax;
-            spaceStats[session.spaceName].earnings += sessionEarnings;
-        } else {
-            // Handle any unexpected space names
-            spaceStats[session.spaceName] = { pax: session.pax, earnings: sessionEarnings };
+        // Finalize checkout (called from popup)
+        function finalizeCheckout(sessionId) {
+            // Calculate total
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+            });
+            
+            // Save sale record
+            const saleRecord = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                items: [...cart],
+                total: total,
+                type: sessionId ? 'stay+products' : 'products',
+                sessionId: sessionId || null
+            };
+            
+            sales.push(saleRecord);
+            
+            // Update products stock (already reduced when added to cart)
+            products.forEach(product => {
+                const cartItem = cart.find(item => item.id === product.id);
+                if (cartItem) {
+                    // Stock was already reduced when added to cart
+                    // We just need to save the changes
+                }
+            });
+            
+            // Clear cart
+            cart = [];
+            
+            // Save all data
+            saveProducts();
+            saveCategories();
+            saveCart();
+            saveSales();
+            
+            // Update displays
+            updateCartDisplay();
+            updateProductGrid(document.getElementById('category-select').value);
+            
+            // If this was part of a session, no need to do anything else
+            // The products are already linked via sessionId in the sale record
         }
-    });
-    
-    // Update the summary display
-    document.getElementById('today-earnings').textContent = `₱${totalEarnings.toFixed(2)}`;
-    document.getElementById('today-pax').textContent = totalPax;
-    
-    // Update space breakdown
-    const spaceBreakdown = document.getElementById('space-breakdown');
-    spaceBreakdown.innerHTML = '';
-    
-    for (const [space, stats] of Object.entries(spaceStats)) {
-        if (stats.pax > 0) {
-            const spaceRow = document.createElement('div');
-            spaceRow.className = 'space-summary';
-            spaceRow.textContent = `${space}: ${stats.pax}pax – ₱${stats.earnings.toFixed(2)}`;
-            spaceBreakdown.appendChild(spaceRow);
-        }
-    }
-}
 
-function init() {
-    loadSessions();
-    displayActiveSessions();
-    displayInactiveSessions();
-    
-    alarmInterval = setInterval(() => {
-        if (!isEditing) {
-            checkAlarms();
+        // ========== PRODUCT MANAGEMENT ==========
+        function showProductManagement() {
+            document.getElementById('product-management').style.display = 'flex';
+            loadProductList();
         }
-    }, 1000);
-    
-    saveInterval = setInterval(() => {
-        if (!isEditing) {
-            saveSessions();
-        }
-    }, 5000);
-}
 
-window.onload = init;
-</script>
+        function hideProductManagement() {
+            document.getElementById('product-management').style.display = 'none';
+            currentProductId = null;
+            resetProductForm();
+        }
+
+        function loadProductList() {
+            const productList = document.getElementById('product-list');
+            productList.innerHTML = '';
+            
+            products.forEach(product => {
+                const listItem = document.createElement('div');
+                listItem.className = 'product-list-item';
+                
+                listItem.innerHTML = `
+                    <div style="display:flex; align-items:center;">
+                        ${product.image ? `<img src="${product.image}">` : ''}
+                        <div>
+                            <div>${product.name}</div>
+                            <div style="font-size:12px;">₱${product.price.toFixed(2)} • Stock: ${product.stock}</div>
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="edit-btn" onclick="editProduct(${product.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
+                    </div>
+                `;
+                
+                productList.appendChild(listItem);
+            });
+        }
+
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            currentProductId = productId;
+            
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-price').value = product.price;
+            document.getElementById('product-category').value = product.category;
+            document.getElementById('product-stock').value = product.stock;
+            document.getElementById('product-description').value = product.description || '';
+            
+            if (product.image) {
+                document.getElementById('image-preview').src = product.image;
+                document.getElementById('image-preview').style.display = 'block';
+            }
+        }
+
+        function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+            
+            products = products.filter(p => p.id !== productId);
+            saveProducts();
+            loadProductList();
+            updateProductGrid(document.getElementById('category-select').value);
+        }
+
+        function saveProduct() {
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const category = document.getElementById('product-category').value;
+            const stock = parseInt(document.getElementById('product-stock').value);
+            const description = document.getElementById('product-description').value;
+            const imageInput = document.getElementById('product-image');
+            
+            if (!name || isNaN(price) || !category || isNaN(stock)) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Handle image
+            let image = null;
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    image = e.target.result;
+                    completeSave();
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else if (currentProductId && products.find(p => p.id === currentProductId)?.image) {
+                // Keep existing image if editing and no new image selected
+                image = products.find(p => p.id === currentProductId).image;
+                completeSave();
+            } else {
+                completeSave();
+            }
+            
+            function completeSave() {
+                if (currentProductId) {
+                    // Update existing product
+                    const index = products.findIndex(p => p.id === currentProductId);
+                    if (index !== -1) {
+                        products[index] = {
+                            ...products[index],
+                            name,
+                            price,
+                            category,
+                            stock,
+                            description,
+                            image: image || products[index].image
+                        };
+                    }
+                } else {
+                    // Add new product
+                    const newProduct = {
+                        id: Date.now(),
+                        name,
+                        price,
+                        category,
+                        stock,
+                        description,
+                        image
+                    };
+                    products.push(newProduct);
+                    
+                    // Add category if new
+                    if (!categories.includes(category)) {
+                        categories.push(category);
+                        saveCategories();
+                        updateCategoryDropdown();
+                    }
+                }
+                
+                saveProducts();
+                loadProductList();
+                updateProductGrid(document.getElementById('category-select').value);
+                resetProductForm();
+            }
+        }
+
+        function resetProductForm() {
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-category').value = '';
+            document.getElementById('product-stock').value = '';
+            document.getElementById('product-description').value = '';
+            document.getElementById('product-image').value = '';
+            document.getElementById('image-preview').style.display = 'none';
+            currentProductId = null;
+        }
+
+        // ========== DATA SAVING FUNCTIONS ==========
+        function saveProducts() {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        function saveCategories() {
+            localStorage.setItem('categories', JSON.stringify(categories));
+        }
+
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function saveSales() {
+            localStorage.setItem('sales', JSON.stringify(sales));
+        }
+
+        // Initialize everything when page loads
+        window.onload = function() {
+            init(); // Your existing init function
+            initStorePanel();
+            updateReport();
+            
+            // Add event listener for image preview
+            document.getElementById('product-image').addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('image-preview').src = event.target.result;
+                        document.getElementById('image-preview').style.display = 'block';
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+        };
+
+        // Expose functions to popup window
+        window.finalizeCheckout = finalizeCheckout;
+    </script>
 </body>
 </html>
