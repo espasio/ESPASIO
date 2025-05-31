@@ -241,37 +241,6 @@
             max-height: 70vh;
             overflow-y: auto;
         }
-        /* REPORT TAB STYLES */
-        #report-container {
-            background: white;
-            color: #003300;
-            padding: 10px;
-            border-radius: 3px;
-        }
-        .report-header {
-            font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
-        .report-section {
-            margin-bottom: 15px;
-        }
-        .report-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        .report-label {
-            font-weight: 600;
-        }
-        .report-total {
-            font-weight: bold;
-            border-top: 1px solid #ddd;
-            padding-top: 5px;
-            margin-top: 10px;
-        }
         /* RECEIPT POPUP STYLES */
         .receipt-popup {
             width: 100%;
@@ -446,7 +415,7 @@
         }
         .cart-title {
             font-weight: bold;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px dashed #ddd;
             padding-bottom: 5px;
             margin-bottom: 10px;
         }
@@ -458,7 +427,7 @@
         }
         .cart-total {
             font-weight: bold;
-            border-top: 1px solid #ddd;
+            border-top: 1px dashed #ddd;
             padding-top: 5px;
             margin-top: 10px;
         }
@@ -597,7 +566,6 @@
                 <button class="tab active" onclick="switchTab('main')">New</button>
                 <button class="tab" onclick="switchTab('active')">Active</button>
                 <button class="tab" onclick="switchTab('inactive')">History</button>
-                <button class="tab" onclick="switchTab('report')">Report</button>
             </div>
             
             <div id="main" class="tab-content active">
@@ -636,37 +604,6 @@
             
             <div id="inactive" class="tab-content">
                 <div id="inactive-sessions-container"></div>
-            </div>
-            
-            <div id="report" class="tab-content">
-                <div id="report-container">
-                    <div class="report-header">Daily Report</div>
-                    <div class="report-section">
-                        <div class="report-row">
-                            <span class="report-label">Active Sessions:</span>
-                            <span id="report-active-count">0</span>
-                        </div>
-                        <div class="report-row">
-                            <span class="report-label">Completed Today:</span>
-                            <span id="report-completed-count">0</span>
-                        </div>
-                    </div>
-                    <div class="report-section">
-                        <div class="report-row">
-                            <span class="report-label">Total Earnings:</span>
-                            <span id="report-total-earnings">₱0.00</span>
-                        </div>
-                        <div class="report-row">
-                            <span class="report-label">Overtime Fees:</span>
-                            <span id="report-overtime-fees">₱0.00</span>
-                        </div>
-                        <div class="report-total">
-                            <span>Total Revenue:</span>
-                            <span id="report-total-revenue">₱0.00</span>
-                        </div>
-                    </div>
-                    <button onclick="generateDailyReport()" style="margin-top: 15px;">Generate Report</button>
-                </div>
             </div>
         </div>
         
@@ -799,8 +736,6 @@
                 displayActiveSessions();
             } else if (tabId === 'inactive') {
                 displayInactiveSessions();
-            } else if (tabId === 'report') {
-                updateReport();
             }
         }
 
@@ -1337,271 +1272,6 @@
             });
         }
 
-        // ========== REPORT FUNCTIONS ==========
-        function updateReport() {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            // Count active sessions
-            document.getElementById('report-active-count').textContent = activeSessions.length;
-            
-            // Count completed sessions today
-            const completedToday = inactiveSessions.filter(session => {
-                return new Date(session.completedTime) >= today;
-            }).length;
-            document.getElementById('report-completed-count').textContent = completedToday;
-            
-            // Calculate earnings
-            let totalEarnings = 0;
-            let overtimeFees = 0;
-            
-            // Calculate from inactive sessions (completed bookings)
-            inactiveSessions.forEach(session => {
-                const durationMs = session.timeOut - session.timeIn;
-                const hours = Math.floor(durationMs / (1000 * 60 * 60));
-                const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-                
-                const isDeskZone = session.spaceName.includes("Desk");
-                const pricePer30Min = isDeskZone ? 25 : 30;
-                const pricePerHour = isDeskZone ? 39 : 49;
-                
-                const totalMinutes = (hours * 60) + minutes;
-                let sessionTotal = 0;
-                
-                if (totalMinutes <= 30) {
-                    sessionTotal = pricePer30Min * session.pax;
-                } else {
-                    const fullHours = Math.floor(totalMinutes / 60);
-                    const remainingMins = totalMinutes % 60;
-                    sessionTotal = (fullHours * pricePerHour * session.pax) +
-                        (Math.ceil(remainingMins / 30) * pricePer30Min * session.pax);
-                }
-                
-                totalEarnings += sessionTotal;
-                overtimeFees += session.overtimeFee || 0;
-            });
-            
-            // Calculate from active sessions (ongoing bookings)
-            activeSessions.forEach(session => {
-                const durationMs = session.timeOut - session.timeIn;
-                const hours = Math.floor(durationMs / (1000 * 60 * 60));
-                const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-                
-                const isDeskZone = session.spaceName.includes("Desk");
-                const pricePer30Min = isDeskZone ? 25 : 30;
-                const pricePerHour = isDeskZone ? 39 : 49;
-                
-                const totalMinutes = (hours * 60) + minutes;
-                let sessionTotal = 0;
-                
-                if (totalMinutes <= 30) {
-                    sessionTotal = pricePer30Min * session.pax;
-                } else {
-                    const fullHours = Math.floor(totalMinutes / 60);
-                    const remainingMins = totalMinutes % 60;
-                    sessionTotal = (fullHours * pricePerHour * session.pax) +
-                        (Math.ceil(remainingMins / 30) * pricePer30Min * session.pax);
-                }
-                
-                totalEarnings += sessionTotal;
-                
-                // Add any current overtime fees for active sessions
-                const now = new Date();
-                if (now > session.timeOut) {
-                    overtimeFees += calculateOvertimeFee(session);
-                }
-            });
-            
-            document.getElementById('report-total-earnings').textContent = `₱${totalEarnings.toFixed(2)}`;
-            document.getElementById('report-overtime-fees').textContent = `₱${overtimeFees.toFixed(2)}`;
-            document.getElementById('report-total-revenue').textContent = `₱${(totalEarnings + overtimeFees).toFixed(2)}`;
-        }
-
-        function generateDailyReport() {
-            updateReport();
-            const popup = window.open('', 'Daily Report', 'width=600,height=800');
-            
-            const today = new Date();
-            const dateStr = today.toLocaleDateString();
-            
-            popup.document.write(`
-                <html>
-                <head>
-                    <title>ESPASIO Daily Report</title>
-                    <style>
-                        body {
-                            font-family: 'Segoe UI', sans-serif;
-                            padding: 20px;
-                        }
-                        .report-header {
-                            text-align: center;
-                            margin-bottom: 20px;
-                        }
-                        .report-title {
-                            font-size: 24px;
-                            font-weight: bold;
-                            margin-bottom: 5px;
-                        }
-                        .report-date {
-                            font-size: 16px;
-                            color: #666;
-                        }
-                        .report-section {
-                            margin-bottom: 20px;
-                            border-bottom: 1px solid #eee;
-                            padding-bottom: 15px;
-                        }
-                        .section-title {
-                            font-size: 18px;
-                            font-weight: bold;
-                            margin-bottom: 10px;
-                        }
-                        .report-row {
-                            display: flex;
-                            justify-content: space-between;
-                            margin-bottom: 5px;
-                        }
-                        .report-label {
-                            font-weight: bold;
-                        }
-                        .report-total {
-                            font-weight: bold;
-                            border-top: 1px solid #ddd;
-                            padding-top: 5px;
-                            margin-top: 10px;
-                        }
-                        table {
-                            width: 100%;
-                            border-collapse: collapse;
-                            margin-top: 10px;
-                        }
-                        th, td {
-                            border: 1px solid #ddd;
-                            padding: 8px;
-                            text-align: left;
-                        }
-                        th {
-                            background-color: #f2f2f2;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="report-header">
-                        <div class="report-title">ESPASIO Daily Report</div>
-                        <div class="report-date">${dateStr}</div>
-                    </div>
-                    
-                    <div class="report-section">
-                        <div class="section-title">Summary</div>
-                        <div class="report-row">
-                            <span class="report-label">Active Sessions:</span>
-                            <span>${activeSessions.length}</span>
-                        </div>
-                        <div class="report-row">
-                            <span class="report-label">Completed Today:</span>
-                            <span>${inactiveSessions.filter(s => new Date(s.completedTime) >= new Date().setHours(0,0,0,0)).length}</span>
-                        </div>
-                        <div class="report-row">
-                            <span class="report-label">Total Earnings:</span>
-                            <span id="popup-total-earnings">₱0.00</span>
-                        </div>
-                        <div class="report-row">
-                            <span class="report-label">Overtime Fees:</span>
-                            <span id="popup-overtime-fees">₱0.00</span>
-                        </div>
-                        <div class="report-total">
-                            <span>Total Revenue:</span>
-                            <span id="popup-total-revenue">₱0.00</span>
-                        </div>
-                    </div>
-                    
-                    <div class="report-section">
-                        <div class="section-title">Active Sessions</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Space</th>
-                                    <th>Customer</th>
-                                    <th>Pax</th>
-                                    <th>Time In</th>
-                                    <th>Time Out</th>
-                                </tr>
-                            </thead>
-                            <tbody id="popup-active-sessions">
-                                <!-- Active sessions will be added here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="report-section">
-                        <div class="section-title">Completed Sessions Today</div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Space</th>
-                                    <th>Customer</th>
-                                    <th>Pax</th>
-                                    <th>Time In</th>
-                                    <th>Time Out</th>
-                                    <th>Overtime Fee</th>
-                                </tr>
-                            </thead>
-                            <tbody id="popup-completed-sessions">
-                                <!-- Completed sessions will be added here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <script>
-                        // Update summary numbers
-                        document.getElementById('popup-total-earnings').textContent = document.getElementById('report-total-earnings').textContent;
-                        document.getElementById('popup-overtime-fees').textContent = document.getElementById('report-overtime-fees').textContent;
-                        document.getElementById('popup-total-revenue').textContent = document.getElementById('report-total-revenue').textContent;
-                        
-                        // Add active sessions
-                        const activeContainer = document.getElementById('popup-active-sessions');
-                        window.opener.activeSessions.forEach(session => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = \`
-                                <td>\${session.spaceName}</td>
-                                <td>\${session.userName || 'N/A'}</td>
-                                <td>\${session.pax}</td>
-                                <td>\${window.opener.formatDateTime(session.timeIn)}</td>
-                                <td>\${window.opener.formatDateTime(session.timeOut)}</td>
-                            \`;
-                            activeContainer.appendChild(row);
-                        });
-                        
-                        // Add completed sessions today
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        const completedContainer = document.getElementById('popup-completed-sessions');
-                        window.opener.inactiveSessions
-                            .filter(session => new Date(session.completedTime) >= today)
-                            .forEach(session => {
-                                const row = document.createElement('tr');
-                                row.innerHTML = \`
-                                    <td>\${session.spaceName}</td>
-                                    <td>\${session.userName || 'N/A'}</td>
-                                    <td>\${session.pax}</td>
-                                    <td>\${window.opener.formatDateTime(session.timeIn)}</td>
-                                    <td>\${window.opener.formatDateTime(session.timeOut)}</td>
-                                    <td>₱\${session.overtimeFee ? session.overtimeFee.toFixed(2) : '0.00'}</td>
-                                \`;
-                                completedContainer.appendChild(row);
-                            });
-                        
-                        // Auto-print and close after a short delay
-                        setTimeout(() => {
-                            window.print();
-                            window.close();
-                        }, 500);
-                    <\/script>
-                </body>
-                </html>
-            `);
-        }
-
         function endSession(id) {
             const index = activeSessions.findIndex(session => session.id === id);
             if (index !== -1) {
@@ -1614,7 +1284,6 @@
                 displayActiveSessions();
                 displayInactiveSessions();
                 saveSessions();
-                updateReport();
             }
         }
 
@@ -1624,7 +1293,6 @@
                 inactiveSessions.splice(index, 1);
                 displayInactiveSessions();
                 saveSessions();
-                updateReport();
             }
         }
 
@@ -1733,6 +1401,24 @@
                     completedTime: new Date(session.completedTime)
                 }));
             }
+        }
+        
+        function init() {
+            loadSessions();
+            displayActiveSessions();
+            displayInactiveSessions();
+            
+            alarmInterval = setInterval(() => {
+                if (!isEditing) {
+                    checkAlarms();
+                }
+            }, 1000);
+            
+            saveInterval = setInterval(() => {
+                if (!isEditing) {
+                    saveSessions();
+                }
+            }, 5000);
         }
 
         // ========== NEW PRODUCT SYSTEM JAVASCRIPT ==========
@@ -2235,7 +1921,6 @@
         window.onload = function() {
             init(); // Your existing init function
             initStorePanel();
-            updateReport();
             
             // Add event listener for image preview
             document.getElementById('product-image').addEventListener('change', function(e) {
